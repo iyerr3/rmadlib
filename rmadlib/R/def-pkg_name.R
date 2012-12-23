@@ -1,0 +1,2 @@
+
+.this.pkg.name <- "rmadlib"
