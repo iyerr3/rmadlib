@@ -15,8 +15,7 @@ db.lm <- function(...)
                                 method = "qr", model = TRUE, x = FALSE, y = FALSE, qr = TRUE,
                                 singular.ok = TRUE, contrasts = NULL, offset, ...)
 {
-    if (class(data)[1] == .db.data.class[1] ||
-        class(data)[1] == .db.data.unsynced.class[1])
+    if (class(data)[1] == .db.data.class[1]) # also need to check data in fomula if no data
     {
         db.lm(...)
     }
