@@ -9,7 +9,7 @@
     is.character(arg)
 }
 
-is.con.id.valid <- function(con.id)
+.is.con.id.valid <- function(con.id)
 {
     !is.na(con.id)
     && con.id >= 1

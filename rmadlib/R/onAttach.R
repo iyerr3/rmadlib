@@ -15,17 +15,21 @@
     ## source("supported-connections.R", local = TRUE)
     .localVars$con.type <- list()
     for (i in seq(along=.supported.connections))
-        .localVars$con.type[[.supported.connections[i]]] <- integer(0)
+        .localVars$con.type[[tolower(.supported.connections[i])]] <- integer(0)
 
     ## create backups for all functions that might be overridden
-     for (i in seq(along = .localConst.hard.override.funcs))
-     {
-         pkg.splits <- strsplit(.localConst.hard.override.funcs[i], "::")[[1]]
-         pkg.name <- pkg.splits[1]
-         func.name <- pkg.splits[2]
-         ## for example, assign base::data.frame to rmadlib::.origin.base.data.frame as a backup
-         assign(paste(".origin.", pkg.name, ".", func.name, sep=""),
-                eval(parse(text = .localConst.hard.override.funcs[i])),
-                envir = as.environment(paste("package:", .this.pkg.name, sep="")))
-     }
+    for (i in seq(along = .localConst.hard.override.funcs))
+    {
+        pkg.splits <- strsplit(.localConst.hard.override.funcs[i], "::")[[1]]
+        pkg.name <- pkg.splits[1]
+        func.name <- pkg.splits[2]
+        ## for example, assign base::data.frame to rmadlib::.origin.base.data.frame as a backup
+        assign(paste(".origin.", pkg.name, ".", func.name, sep=""),
+               eval(parse(text = .localConst.hard.override.funcs[i])),
+               envir = as.environment(paste("package:", .this.pkg.name, sep="")))
+    }
+
+    ## available packages, to check whether RODBC and RPostgreSQL are
+    ## already installed
+    .localConst.installed.pkgs <- tolower(attr(installed.packages(), "dimnames")[[1]])
 }

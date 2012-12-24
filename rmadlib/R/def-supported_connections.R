@@ -1,2 +1,2 @@
 
-.supported.connections <- c("rodbc", "rpostgresql")
+.supported.connections <- c("RODBC", "RPostgreSQL")
