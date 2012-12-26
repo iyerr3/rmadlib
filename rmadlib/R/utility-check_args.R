@@ -11,7 +11,5 @@
 
 .is.con.id.valid <- function(con.id)
 {
-    !is.na(con.id)
-    && con.id >= 1
-    && con.id <= length(.localVars$db)
+    !is.na(con.id) && con.id >= 1 && con.id <= length(.localVars$db)
 }

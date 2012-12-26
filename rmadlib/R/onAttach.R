@@ -3,9 +3,7 @@
 ## define local variables
 
 .onAttach <- function(libname, pkgname)
-{    
-    .localVars <- new.env()
-
+{
     ## manage database connections
     .localVars$db <- list()
     
@@ -28,8 +26,4 @@
                eval(parse(text = .localConst.hard.override.funcs[i])),
                envir = as.environment(paste("package:", .this.pkg.name, sep="")))
     }
-
-    ## available packages, to check whether RODBC and RPostgreSQL are
-    ## already installed
-    .localConst.installed.pkgs <- tolower(attr(installed.packages(), "dimnames")[[1]])
 }

@@ -1,7 +1,12 @@
 
-.db.connect <- function(host, user, dbname, password = "",
-                        con.pkg = "RPostgreSQL")
+db.connect <- function(host, user, dbname, password = "",
+                       con.pkg = "RPostgreSQL")
 {
+    ## available packages, to check whether RODBC and RPostgreSQL are
+    ## already installed
+    if (is.null(.localVars$installed.pkgs))
+        .localVars$installed.pkgs <- tolower(attr(installed.packages(), "dimnames")[[1]])
+    
     ## argument type check
     if (!.is.arg.string(host) ||
         !.is.arg.string(user) ||
@@ -10,19 +15,20 @@
         !.is.arg.string(con.pkg))
         stop("Host, user, dbname, password (could be an empty string) and the connection package should all be strings!")
 
-    ## if the package is not installed, install it
+    ## use one of the R connection package to connect to database
     con.pkg.name <- tolower(con.pkg)
     if (con.pkg.name %in% tolower(.supported.connections)) # make sure that the package is supported
     {
-        if (!(con.pkg.name %in% .localConst.installed.pkgs))
+        i <- which(tolower(.supported.connections) == con.pkg.name)
+        pkg.to.load <- .supported.connections[i]
+        if (!(con.pkg.name %in% .localVars$installed.pkgs)) # if the package is not installed, install it
         {
-            i <- which(tolower(.supported.connections) == con.pkg.name)
-            pkg.to.install <- .supported.connections[i]
-            print(paste("Package ", pkg.to.install, " is going to be installed so that ", .this.pkg.name, " could connect to databases.\n\n", sep = ""))
-            install.packages(pkgs = pkg.to.install, type = "source")
+            print(paste("Package ", pkg.to.load, " is going to be installed so that ", .this.pkg.name, " could connect to databases.\n\n", sep = ""))
+            install.packages(pkgs = pkg.to.load, type = "source")
         }
 
-        command <- paste(".db.connect.", con.pkg.name, "(host=", host, "user=", user, "dbname=", dbname, "password=", password, ")", sep = "")
+        eval(parse(text = paste("library(", pkg.to.load, ")", sep = "")))
+        command <- paste(".db.connect.", con.pkg.name, "(host='", host, "', user='", user, "', dbname='", dbname, "', password='", password, "')", sep = "")
         result <- eval(parse(text = command))
         return (paste("Created a connection to database with ID ", result))
     }
@@ -33,7 +39,7 @@
 }
 
 ### ----------------------------------------------------------------    
-.db.disconnect <- function(con.id = 1)
+db.disconnect <- function(con.id = 1)
 {
     ## check whether this connection exists
     if (!.is.con.id.valid(con.id))
@@ -47,23 +53,63 @@
 }
 
 ### ----------------------------------------------------------------
-.db.sendQuery <- function(con.id = 1, query)
+db.sendQuery <- function(con.id = 1, query)
 {
     if (!.is.con.id.valid(con.id))
         stop("There is no such connection!")
 
-    ## Users will never directly use string queries
-    ## The exported functions will make sure the query is always strings
-    ## no need to check 
-    ## if (!.is.arg.string(query))
-    ##     stop("The query must be a string!")
+    if (!.is.arg.string(query))
+        stop("The query must be a string!")
 
-    command <- paste(".db.sendQuery.", .localVars$db[[con.id]]$rcon.pkg, "(con.id=", con.id, "query=", query, ")", sep = "")
+    command <- paste(".db.sendQuery.", .localVars$db[[con.id]]$rcon.pkg, "(con.id=", con.id, ", query='", query, "')", sep = "")
     eval(parse(text = command))
 }
 
 ### ----------------------------------------------------------------
-.db.getQuery <- function(con.id = 1, query)
+db.getQuery <- function(con.id = 1, query)
 {
-    
+    if (!.is.con.id.valid(con.id))
+        stop("There is no such connection!")
+
+    if (!.is.arg.string(query))
+        stop("The query must be a string!")
+
+    command <- paste(".db.getQuery.", .localVars$db[[con.id]]$rcon.pkg, "(con.id=", con.id, ", query='", query, "')", sep = "")
+    eval(parse(text = command))
+}
+
+### ----------------------------------------------------------------
+db.listTables <- function(con.id = 1)
+{
+    if (!.is.con.id.valid(con.id))
+        stop("There is no such connection!")
+
+    command <- paste(".db.listTables.", .localVars$db[[con.id]]$rcon.pkg, "(con.id=", con.id, ")", sep = "")
+    eval(parse(text = command))
+}
+
+### ----------------------------------------------------------------
+db.existsTable <- function(con.id, table)
+{
+    if (!.is.con.id.valid(con.id))
+        stop("There is no such connection!")
+
+    if (!.is.arg.string(table))
+        stop("The table name must be a string!")
+
+    command <- paste(".db.existsTable.", .localVars$db[[con.id]]$rcon.pkg, "(con.id=", con.id, ", table='", table, "')", sep = "")
+    eval(parse(text = command))
+}
+
+### ----------------------------------------------------------------
+db.listColumnNames <- function(con.id, table)
+{
+    if (!.is.con.id.valid(con.id))
+        stop("There is no such connection!")
+
+    if (!.is.arg.string(table))
+        stop("The table name must be a string!")
+
+    command <- paste(".db.listColumnNames.", .localVars$db[[con.id]]$rcon.pkg, "(con.id=", con.id, ", table='", table, "')", sep = "")
+    eval(parse(text = command))
 }

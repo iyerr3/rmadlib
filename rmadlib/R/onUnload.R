@@ -6,8 +6,13 @@
 {
     ## close all unclosed database connections
     for (i in seq(along=.localVars$db))
-        if (.localVars$db[[i]]$rcon.pkg == "rpostgresql")
-            RPostgreSQL::dbDisconnect (.localVars$db[[i]]$connection)
-        else if (.localVars$db[[i]]$rcon.pkg == "rodbc")
-            RODBC::odbcClose (.localVars$db[[i]]$connection)
+        db.disconnect(con.id = i)
+
+    ## also unload all drivers
+    pkg.names <- names(.localVars$drv)
+    for (pkg in pkg.names)
+    {
+        command <- paste(".db.unloadDriver.", drv, "(drv=", .localVars$drv[[pkg]], ")", sep = "")
+        eval(parse(text = command))
+    }
 }

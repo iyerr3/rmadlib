@@ -15,7 +15,7 @@ db.lm <- function(...)
                                 method = "qr", model = TRUE, x = FALSE, y = FALSE, qr = TRUE,
                                 singular.ok = TRUE, contrasts = NULL, offset, ...)
 {
-    if (class(data)[1] == .db.data.class[1]) # also need to check data in fomula if no data
+    if (is(data, "data.frame.indb")) # also need to check data in fomula if no data
     {
         db.lm(...)
     }
