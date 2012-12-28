@@ -3,9 +3,7 @@
 
 ### resync indb.created object with its table in database
 
-## resync <- function(x) {}
-
-## setGeneric("resync", signature = "x")
+## setGeneric("resync", def = function (x) standardGeneric("resync"), signature = "x")
 
 ## setMethod("resync",
 ##           signature(x = "indb.created"),

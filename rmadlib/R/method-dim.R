@@ -5,6 +5,6 @@ setMethod("dim",
           signature(x = "indb.created"),
           function (x)
           {
-              x@dim
+              x@.dim
           }
           )

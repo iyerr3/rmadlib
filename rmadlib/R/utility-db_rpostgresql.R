@@ -34,13 +34,13 @@
 }
 
 ### ----------------------------------------------------------------
-.db.sendQuery.rpostgresql <- function(con.id, query)
+.db.sendQuery.rpostgresql <- function(query, con.id)
 {
     RPostgreSQL::dbSendQuery(.localVars$db[[con.id]]$con, query)
 }
 
 ### ----------------------------------------------------------------
-.db.getQuery.rpostgresql <- function(con.id, query)
+.db.getQuery.rpostgresql <- function(query, con.id)
 {
     RPostgreSQL::dbGetQuery(.localVars$db[[con.id]]$con, query)
 }
@@ -52,15 +52,15 @@
 }
 
 ### ----------------------------------------------------------------
-.db.existsTable.rpostgresql <- function(con.id, table)
+.db.existsTable.rpostgresql <- function(table, con.id)
 {
     RPostgreSQL::dbExistsTable(.localVars$db[[con.id]]$con, table)
 }
 
 ### ----------------------------------------------------------------
-.db.listColumnNames.rpostgresql <- function(con.id, table)
+.db.listColumnNames.rpostgresql <- function(table, con.id)
 {
-    if (!.db.existsTable.rpostgresql(con.id, table))
+    if (!.db.existsTable.rpostgresql(table = table, con.id = con.id))
         stop("No such table!")
 
     RPostgreSQL::dbListFields(.localVars$db[[con.id]]$con, table)

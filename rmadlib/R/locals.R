@@ -4,10 +4,11 @@
 ## The R object has its corresponding table in database
 setClass("indb.created",
          representation(
-             table = "character", # table name
-             con.id = "numeric", # connection ID
-             order.by = "character", # which column is used to order rows
-             dim = "numeric" # dimension of table
+             .table = "character", # table name
+             .con.id = "numeric", # connection ID
+             .order.by = "character", # which column is used to order rows
+             .dim = "numeric", # dimension of table
+             .col.names = "character" # column names
              )
          )
 
@@ -17,9 +18,9 @@ setClass("indb.created",
 ## It can be converted to "indb.created" via as.data.frame.indb()
 setClass("indb.uncreated",
          representation(
-             query = "character",
-             tables = "character",
-             con.id = "numeric"
+             .query = "character",
+             .tables = "character",
+             .con.id = "numeric"
              )
          )
 

@@ -3,7 +3,9 @@
 
 ## as.data.frame.indb <- function(x, ...) { }
 
-## setGeneric("as.data.frame.indb", signature = "x")
+setGeneric("as.data.frame.indb",
+           function (x, ...) standardGeneric("as.data.frame.indb"),
+           signature = "x")
 
 ## setMethod("as.data.frame.indb",
 ##           signature(x = "data.frame"),
