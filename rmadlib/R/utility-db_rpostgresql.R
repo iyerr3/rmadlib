@@ -1,7 +1,7 @@
 ### Not to be called by the users, so all functions start with a prefix of dot
 ### and thus are not exported.
 
-### Database related utilities:
+### Database related utilities, using RPostgreSQL to connect
 
 ### ----------------------------------------------------------------
 .db.connect.rpostgresql <- function(host, user, dbname, password)

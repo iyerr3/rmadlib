@@ -1,4 +1,5 @@
 
+
 ## to be finished
 
 ## data.frame.indb <- function(x, ...) {}
@@ -9,12 +10,15 @@ setGeneric("data.frame.indb",
 
 setMethod("data.frame.indb",
           signature(x = "character"),
-          function (x, con.id = 1, order.by = "")
+          function (x, con.id = 1, id.col = character(0))
           {
               dfi <- new("indb.created",
                          .table = x,
                          .con.id = con.id,
-                         .order.by = order.by,
+                         .dbname = dbname(con.id),
+                         .host = host(con.id),
+                         .con.pkg = con.pkg(con.id),
+                         .id.col = id.col,
                          .dim = numeric(0))
 
               dfi@.col.names <- db.listColumnNames(table = x, con.id = con.id)

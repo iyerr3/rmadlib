@@ -7,10 +7,9 @@ setMethod("print",
           signature(x = "indb.created"),
           function (x)
           {
-              cat(paste("Table ", x@table, " in database ",
-                                   .localVars$db[[x@con.id]]$dbname, "\n", sep = ""))
-              cat(paste("User name: ", .localVars$db[[x@con.id]]$user, "\n", sep = ""))
-              cat(paste("Host: ", .localVars$db[[x@con.id]]$host, "\n", sep = ""))
+              cat(paste("Table ", x@table, " in database ", dbname(con.id(x)), "\n", sep = ""))
+              cat(paste("Host: ", host(con.id(x)), "\n", sep = ""))
+              cat(paste("Connected with package ", con.pkg(con.id(x)), "\n", sep = ""))
           })
 
 setMethod("show",

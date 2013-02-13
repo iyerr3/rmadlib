@@ -15,7 +15,7 @@
     for (i in seq(along=.supported.connections))
         .localVars$con.type[[tolower(.supported.connections[i])]] <- integer(0)
 
-    ## create backups for all functions that might be overridden
+    ## create backups for all functions that might be hard overridden
     for (i in seq(along = .localConst.hard.override.funcs))
     {
         pkg.splits <- strsplit(.localConst.hard.override.funcs[i], "::")[[1]]

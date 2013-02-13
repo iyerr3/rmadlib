@@ -1,4 +1,7 @@
 
+## Universal database connection utilities
+## Multiple R connection packages are supported
+
 db.connect <- function(host, user, dbname, password = "",
                        con.pkg = "RPostgreSQL")
 {
