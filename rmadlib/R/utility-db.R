@@ -2,7 +2,7 @@
 ## Universal database connection utilities
 ## Multiple R connection packages are supported
 
-db.connect <- function(host, user, dbname, password = "",
+.db.connect <- function(host, user, dbname, password = "",
                        con.pkg = "RPostgreSQL")
 {
     ## available packages, to check whether RODBC and RPostgreSQL are
@@ -42,7 +42,7 @@ db.connect <- function(host, user, dbname, password = "",
 }
 
 ### ----------------------------------------------------------------    
-db.disconnect <- function(con.id = 1)
+.db.disconnect <- function(con.id = 1)
 {
     ## check whether this connection exists
     if (!.is.con.id.valid(con.id))
@@ -56,7 +56,7 @@ db.disconnect <- function(con.id = 1)
 }
 
 ### ----------------------------------------------------------------
-db.sendQuery <- function(query, con.id = 1)
+.db.sendQuery <- function(query, con.id = 1)
 {
     if (!.is.con.id.valid(con.id))
         stop("There is no such connection!")
@@ -69,7 +69,7 @@ db.sendQuery <- function(query, con.id = 1)
 }
 
 ### ----------------------------------------------------------------
-db.getQuery <- function(query, con.id = 1)
+.db.getQuery <- function(query, con.id = 1)
 {
     if (!.is.con.id.valid(con.id))
         stop("There is no such connection!")
@@ -82,7 +82,7 @@ db.getQuery <- function(query, con.id = 1)
 }
 
 ### ----------------------------------------------------------------
-db.listTables <- function(con.id = 1)
+.db.listTables <- function(con.id = 1)
 {
     if (!.is.con.id.valid(con.id))
         stop("There is no such connection!")
@@ -92,7 +92,7 @@ db.listTables <- function(con.id = 1)
 }
 
 ### ----------------------------------------------------------------
-db.existsTable <- function(table, con.id = 1)
+.db.existsTable <- function(table, con.id = 1)
 {
     if (!.is.con.id.valid(con.id))
         stop("There is no such connection!")
@@ -105,7 +105,7 @@ db.existsTable <- function(table, con.id = 1)
 }
 
 ### ----------------------------------------------------------------
-db.listColumnNames <- function(table, con.id = 1)
+.db.listColumnNames <- function(table, con.id = 1)
 {
     if (!.is.con.id.valid(con.id))
         stop("There is no such connection!")
@@ -113,6 +113,28 @@ db.listColumnNames <- function(table, con.id = 1)
     if (!.is.arg.string(table))
         stop("The table name must be a string!")
 
-    command <- paste(".db.listColumnNames.", .localVars$db[[con.id]]$rcon.pkg, "(table=\"", table, "\", con.id=", con.id, ")", sep = "")
+    command <- paste(".db.listColumnNames.", .localVars$db[[con.id]]$rcon.pkg,
+                     "(table=\"", table, "\", con.id=", con.id, ")", sep = "")
+    eval(parse(text = command))
+}
+
+## ------------------------------------------------------------------------
+.db.writeTable <- function(table, dframe, row.names = TRUE, 
+                           overwrite = FALSE, append = FALSE,
+                           con.id = 1)
+{
+    if (! .is.con.id.valid(con.id))
+        stop("There is no such connection!")
+
+    if (! .is.arg.string(table))
+        stop("The table name must be a string!")
+
+    if (! is.data.frame(dframe))
+        stop("The data must be in a data frame format!")
+
+    command <- paste(".db.listColumnNames.", .localVars$db[[con.id]]$rcon.pkg,
+                     "(table=\"", table, "\", dframe=", dframe,
+                     ", row.names=", row.names, ", overwrite=", overwrite,
+                     ", append=", append, ", con.id=", con.id, ")", sep = "")
     eval(parse(text = command))
 }

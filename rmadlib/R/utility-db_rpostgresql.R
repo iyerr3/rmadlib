@@ -65,3 +65,11 @@
 
     RPostgreSQL::dbListFields(.localVars$db[[con.id]]$con, table)
 }
+
+## ------------------------------------------------------------------------
+.db.writeTable.rpostgresql <- function (table, dframe, row.names, 
+                                        overwrite, append, con.id)
+{
+    RPostgreSQL::dbWriteTable(.localVars$db[[con.id]]$con, table, dframe,
+                              row.names, overwrite, append)
+}
