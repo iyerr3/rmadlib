@@ -1,4 +1,7 @@
 
+## To be removed
+## The functionality is incorporated into db.data.frame
+
 setGeneric("data.frame.indb.uncreated",
            def = function (x, ...) standardGeneric("data.frame.indb.uncreated"),
            signature = "x")

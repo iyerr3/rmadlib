@@ -4,7 +4,7 @@
 setGeneric("print", signature = "x")
 
 setMethod("print",
-          signature(x = "indb.created"),
+          signature(x = "db.obj"),
           function (x)
           {
               cat(paste("Table ", x@table, " in database ", dbname(con.id(x)), "\n", sep = ""))
@@ -13,7 +13,7 @@ setMethod("print",
           })
 
 setMethod("show",
-          signature(object = "indb.created"),
+          signature(object = "db.obj"),
           function (object)
           {
               print(object)

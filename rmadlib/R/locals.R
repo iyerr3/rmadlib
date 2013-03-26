@@ -1,21 +1,29 @@
+
+## ------------------------------------------------------------------------
 ## Private variables of the package
 
 ## All local variables defined at the package loading time
 ## cannot be changed without exposing to users. If we really
 ## export these variables, they will easily interfere with other
 ## user defined variables.
+## 
 ## The only way is to define a local environment inside the package.
-## The environment is a constant and cannot be changed,
+##
+## The environment is a constant and cannot be changed, 
 ## but the variables inside this environment can be changed.
 ## The environment constant is not exported, and is thus hidden
 ## from the users.
+## ------------------------------------------------------------------------
+
 .localVars <- new.env()
 
 ## create class structure ----------------
+
 ## The R object has its corresponding table/view in database
-setClass("indb.created",
+## object in database
+setClass("db.obj",
          representation(
-             .name = "character", # table name
+             .name = "character", # object name
              .con.id = "numeric", # connection ID
              ## used for identify connection
              .dbname = "character", # database name
@@ -27,34 +35,36 @@ setClass("indb.created",
              )
          )
 
-## table, a sub-class of indb.created
-setClass("indb.table",
+## table, a sub-class of db.obj
+setClass("db.obj.table",
          representation(
              .id.col = "character", # which column is used to identify different rows
              .dim = "numeric" # dimension of table
              ),
-         contains = "indb.created")
+         contains = "db.obj")
 
-## view, a sub-class of indb.created
-setClass("indb.view",
-         representaion(
+## view, a sub-class of db.obj
+setClass("db.obj.view",
+         representation(
              .query = "character" # the view query
              ),
-         contains = "indb.created")
+         contains = "db.obj")
 
 ## The R object has no coresponding table in database
 ## It is generated in the middle of computations that involve
-## "indb.created" or "indb.uncreated" objects.
-## It can be converted to "indb.created" via as.data.frame.indb()
+## "db.obj" or "query.obj" objects.
+## It can be converted to "db.obj" via realize(), which returns
+## a db.obj
 ## More precisely, it is a view existing in R only
-## It can be converted into indb.created objects
-setClass("indb.uncreated",
+## It can be converted into db.obj objects
+setClass("query.obj",
          representation(
              .query = "character",
              .con.id = "numeric",
              .dbname = "character",
              .host = "character",
-             .con.pkg = "character"
+             .con.pkg = "character",
+             .col.names = "character"
              )
          )
 
@@ -62,4 +72,4 @@ setClass("indb.uncreated",
 ## defined in the above.
 ## Many functions in this package should operate on both classes.
 ## So we define this abstract class.
-setClassUnion("data.frame.indb", members = c("indb.created", "indb.uncreated"))
+setClassUnion("db.data.frame", members = c("db.obj", "query.obj"))
