@@ -4,13 +4,13 @@
 ### Database related utilities, using RPostgreSQL to connect
 
 ## ------------------------------------------------------------------------
-.db.connect.rpostgresql <- function(host, user, dbname, password)
+.db.connect.rpostgresql <- function(host, user, dbname, password, port)
 {
     if (is.null(.localVars$drv$rpostgresql))
         .localVars$drv$rpostgresql <- DBI::dbDriver("PostgreSQL")
     
     n.db <- length(.localVars$db)
-    db.connection <- RPostgreSQL::dbConnect(.localVars$drv$rpostgresql, host=host, user=user, dbname=dbname, password=password)
+    db.connection <- RPostgreSQL::dbConnect(.localVars$drv$rpostgresql, host=host, user=user, dbname=dbname, password=password, port = port)
     .localVars$db[[n.db+1]] <- list(
                                conn = db.connection,
                                host = host,
@@ -86,7 +86,9 @@
     if (is.null(distributed.by)) {
         dist.str <- ""
     } else {
-        if (is.na(distributed.by)) # NA means distributed randomly
+        if (!.is.arg.string(distributed.by))
+            stop("distributed.by must be a string or NULL!")
+        if (distributed.by == "") # "" means distributed randomly
             dist.str <- "DISTRIBUTED RANDOMLY"
         else
             dist.str <- paste("DISTRIBUTED BY (", distributed.by, ")", sep = "")

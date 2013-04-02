@@ -9,7 +9,7 @@
 ## If the connection package is not installed, it will
 ## be automatically installed
 ## A driver will be automatically created for connection package
-db.connect <- function (host, user, dbname, password = "",
+db.connect <- function (host, user, dbname, password = "", port = "",
                         conn.pkg = "RPostgreSQL")
 {
     ## available packages, to check whether RODBC and RPostgreSQL are
@@ -41,7 +41,8 @@ db.connect <- function (host, user, dbname, password = "",
         eval(parse(text = paste("library(", pkg.to.load, ")", sep = "")))
         command <- paste(".db.connect.", conn.pkg.name, "(host=\"", host,
                          "\", user=\"", user, "\", dbname=\"", dbname,
-                         "\", password=\"", password, "\")", sep = "")
+                         "\", password=\"", password, "\", port=", port,
+                         ")", sep = "")
         result <- eval(parse(text = command))
         return (paste("Created a connection to database with ID", result))
     }

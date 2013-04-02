@@ -8,7 +8,7 @@
   ++ A concise (1-5 lines) description of what the function does. ++
 }
 \usage{
-db.connect(host, user, dbname, password = "", conn.pkg = "RPostgreSQL")
+db.connect(host, user, dbname, password = "", port = "", conn.pkg = "RPostgreSQL")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,10 +23,13 @@ db.connect(host, user, dbname, password = "", conn.pkg = "RPostgreSQL")
 }
   \item{password}{
      ++Describe \code{password} here++
-}
+   }
+   \item{port}{
+     port number
+   }
   \item{conn.pkg}{
      ++Describe \code{conn.pkg} here++
-}
+   }
 }
 \details{
   ++ If necessary, more details than the description above ++

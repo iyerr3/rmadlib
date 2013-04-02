@@ -2,7 +2,8 @@
 require(RPostgreSQL)
 
 drv <- dbDriver("PostgreSQL")
-conn <- dbConnect(drv = drv, host = "localhost", dbname = "qianh1", user = "qianh1", password = "", port = 14526)
+
+conn <- dbConnect(drv = drv, host = "localhost", dbname = "qianh1", user = "qianh1", password = "")
 
 dbListConnections(drv)
 
