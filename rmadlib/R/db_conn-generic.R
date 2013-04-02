@@ -47,7 +47,8 @@ db.connect <- function (host, user, dbname, password = "", port = "",
                          "\", password=\"", password, "\", port=", port,
                          ")", sep = "")
         result <- eval(parse(text = command))
-        return (paste("Created a connection to database with ID", result))
+        cat(paste("Created a connection to database with ID", result))
+        return (result)
     }
     else
     {
@@ -66,12 +67,21 @@ db.disconnect <- function (conn.id = 1, verbose = TRUE)
 
     conn.pkg <- .localVars$db[[conn.id]]$conn.pkg
     command <- paste(".db.disconnect.", conn.pkg, "(conn.id=", conn.id, ")", sep = "")
-    eval(parse(text = command))
-    .localVars$db[[conn.id]] <- NULL
-    .localVars$conn.type[[conn.pkg]] <- .localVars$conn.type[[conn.pkg]][-which(.localVars$conn.type[[conn.pkg]]==conn.id)]
+    res <- eval(parse(text = command))
+    if (res)
+    {
+        .localVars$db[[conn.id]] <- NULL
+        .localVars$conn.type[[conn.pkg]] <- .localVars$conn.type[[conn.pkg]][-which(.localVars$conn.type[[conn.pkg]]==conn.id)]
 
-    if (verbose)
-        cat(paste("Connection", conn.id, "is disconnected!\n"))
+        if (verbose)
+            cat(paste("Connection", conn.id, "is disconnected!\n"))
+    }
+    else
+    {
+        cat("There was a problem and the connection cannot be disconnected")
+    }
+
+    return (res)
 }
 
 ## ------------------------------------------------------------------------
