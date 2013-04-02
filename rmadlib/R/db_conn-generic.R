@@ -2,6 +2,9 @@
 ## ------------------------------------------------------------------------
 ## Universal database connection utilities
 ## Multiple R connection packages are supported
+
+## Note: Internal functions do not need argument check
+## only functions that are exposed to the users need the check
 ## ------------------------------------------------------------------------
 
 ## connect to a database using a specific R package
@@ -68,7 +71,7 @@ db.disconnect <- function (conn.id = 1, verbose = TRUE)
     .localVars$conn.type[[conn.pkg]] <- .localVars$conn.type[[conn.pkg]][-which(.localVars$conn.type[[conn.pkg]]==conn.id)]
 
     if (verbose)
-        cat(paste("Connection", conn.id, "is disconnected!"))
+        cat(paste("Connection", conn.id, "is disconnected!\n"))
 }
 
 ## ------------------------------------------------------------------------
@@ -78,29 +81,66 @@ db.list <- function ()
 {
     n.conn <- length(.localVars$db)
     cat("\nDatabase Connection Info\n")
-    for (i in seq(n.conn))
+    if (n.conn == 0)
     {
         cat("\n## -------------------------------\n")
-        cat(paste("[Connection ID ", i, "]\n", sep = ""))
-        cat(paste("Host :     ", .localVars$db[[i]]$host, "\n", sep = ""))
-        cat(paste("User :     ", .localVars$db[[i]]$user, "\n", sep = ""))
-        cat(paste("Database : ", .localVars$db[[i]]$dbname, "\n", sep = ""))
-        
-        pkg <- .localVars$db[[i]]$conn.pkg
-        id <- which(tolower(.supported.connections) == pkg)
-        cat(paste("Conn pkg : ", .supported.connections[id], "\n", sep = ""))
+        cat("******** No database connections! ********\n\n")
     }
-    cat("\n")
+    else
+    {
+        for (i in seq(n.conn))
+        {
+            cat("\n## -------------------------------\n")
+            cat(paste("[Connection ID ", i, "]\n", sep = ""))
+            cat(paste("Host :     ", .localVars$db[[i]]$host, "\n", sep = ""))
+            cat(paste("User :     ", .localVars$db[[i]]$user, "\n", sep = ""))
+            cat(paste("Database : ", .localVars$db[[i]]$dbname, "\n", sep = ""))
+            
+            pkg <- .localVars$db[[i]]$conn.pkg
+            id <- which(tolower(.supported.connections) == pkg)
+            cat(paste("Conn pkg : ", .supported.connections[id], "\n", sep = ""))
+        }
+        cat("\n")
+    }
 }
 
 ## ------------------------------------------------------------------------
 ## All the following function are used inside the package only
 ## ------------------------------------------------------------------------
 
+## ------------------------------------------------------------------------
+
+## fetch the result of sendQuery
+.db.fetch <- function (res, n = 500)
+{
+    conn.id <- res$conn.id
+    command <- paste(".db.fetch.", .localVars$db[[conn.id]]$conn.pkg, "(res = res$res, n = n)", sep = "")
+    eval(parse(text = command))
+}
+
+## ------------------------------------------------------------------------
+
+## convert {...} string into an array
+.db.str2vec <- function (str, type = "double")
+{
+    elm <- regmatches(str, gregexpr("[^,\"\\s\\{\\}]+|\"(\\\"|[^\"])*\"", str, perl=T))[[1]]
+    if (type == "character")
+        return (elm)
+    else if (type == "integer")
+        return (as.integer(elm))
+    else if (type == "logical")
+        return (as.logical(toupper(elm)))
+    else
+        return (as.numeric(elm))
+}
+
+## ------------------------------------------------------------------------
+
 ## unload driver for a specific connection package
 .db.unloadDriver <- function (pkg)
 {
-    command <- paste(".db.unloadDriver.", pkg, "(drv=", .localVars$drv[[pkg]], ")", sep = "")
+    command <- paste(".db.unloadDriver.", pkg, "(drv=",
+                     .localVars$drv[[pkg]], ")", sep = "")
     eval(parse(text = command))
 }
 
@@ -108,27 +148,17 @@ db.list <- function ()
 
 .db.sendQuery <- function (query, conn.id = 1)
 {
-    if (!.is.conn.id.valid(conn.id))
-        stop("There is no such connection!")
-
-    if (!.is.arg.string(query))
-        stop("The query must be a string!")
-
-    command <- paste(".db.sendQuery.", .localVars$db[[conn.id]]$conn.pkg, "(query=\"", query, "\", conn.id=", conn.id, ")", sep = "")
-    eval(parse(text = command))
+    command <- paste(".db.sendQuery.", .localVars$db[[conn.id]]$conn.pkg,
+                     "(query=query, conn.id=conn.id)", sep = "")
+    list(res = eval(parse(text = command)), conn.id = conn.id)
 }
 
 ## ------------------------------------------------------------------------
 
 .db.getQuery <- function (query, conn.id = 1)
 {
-    if (!.is.conn.id.valid(conn.id))
-        stop("There is no such connection!")
-
-    if (!.is.arg.string(query))
-        stop("The query must be a string!")
-
-    command <- paste(".db.getQuery.", .localVars$db[[conn.id]]$conn.pkg, "(query=\"", query, "\", conn.id=", conn.id, ")", sep = "")
+    command <- paste(".db.getQuery.", .localVars$db[[conn.id]]$conn.pkg,
+                     "(query=query, conn.id=conn.id)", sep = "")
     eval(parse(text = command))
 }
 
@@ -136,10 +166,8 @@ db.list <- function ()
 
 .db.listTables <- function (conn.id = 1)
 {
-    if (!.is.conn.id.valid(conn.id))
-        stop("There is no such connection!")
-
-    command <- paste(".db.listTables.", .localVars$db[[conn.id]]$conn.pkg, "(conn.id=", conn.id, ")", sep = "")
+    command <- paste(".db.listTables.", .localVars$db[[conn.id]]$conn.pkg,
+                     "(conn.id=conn.id)", sep = "")
     eval(parse(text = command))
 }
 
@@ -147,13 +175,8 @@ db.list <- function ()
 
 .db.existsTable <- function (table, conn.id = 1)
 {
-    if (!.is.conn.id.valid(conn.id))
-        stop("There is no such connection!")
-
-    if (!.is.arg.string(table))
-        stop("The table name must be a string!")
-
-    command <- paste(".db.existsTable.", .localVars$db[[conn.id]]$conn.pkg, "(table=\"", table, "\", conn.id=", conn.id, ")", sep = "")
+    command <- paste(".db.existsTable.", .localVars$db[[conn.id]]$conn.pkg,
+                     "(table=table, conn.id=conn.id)", sep = "")
     eval(parse(text = command))
 }
 
@@ -161,14 +184,8 @@ db.list <- function ()
 
 .db.listFields <- function (table, conn.id = 1)
 {
-    if (!.is.conn.id.valid(conn.id))
-        stop("There is no such connection!")
-
-    if (!.is.arg.string(table))
-        stop("The table name must be a string!")
-
     command <- paste(".db.listFields.", .localVars$db[[conn.id]]$conn.pkg,
-                     "(table=\"", table, "\", conn.id=", conn.id, ")", sep = "")
+                     "(table=table, conn.id=conn.id)", sep = "")
     eval(parse(text = command))
 }
 
@@ -180,38 +197,23 @@ db.list <- function ()
                             conn.id = 1, header, nrows = 50, sep = ",",
                             eol="\n", skip = 0, quote = '"', ...)
 {
-    if (! .is.conn.id.valid(conn.id))
-        stop("There is no such connection!")
-
-    if (! .is.arg.string(table))
-        stop("The table name must be a string!")
-
-    if (! is.data.frame(r.obj))
-        stop("The data must be in a data frame format!")
-
-    command <- paste(".db.listTable.", .localVars$db[[conn.id]]$conn.pkg,
-                     "(table=\"", table, "\", r.obj=", r.obj,
-                     ", row.names=", row.names, ", overwrite=", overwrite,
-                     ", append=", append, ", conn.id=", conn.id, ")", sep = "")
+    command <- paste(".db.writeTable.", .localVars$db[[conn.id]]$conn.pkg,
+                     "(table=table, r.obj=r.obj, row.names=row.names,
+                      overwrite=overwrite, append=append,
+                      distributed.by=distributed.by, conn.id=conn.id,
+                      header=header, nrows=nrows, sep=sep, eol=eol,
+                      skip=skip, quote=quote, ...)",
+                     sep = "")
     eval(parse(text = command))
 }
 
 ## ------------------------------------------------------------------------
 
 .db.readTable <- function (table, rown.names = "row.names", conn.id = 1)
-{
-    if (! .is.conn.id.valid(conn.id))
-        stop("There is no such connection!")
-
-    if (! .is.arg.string(table))
-        stop("The table name must be a string!")
-
-    if (typeof(row.names) == "character")
-        row.names <- paste("\"", row.names, "\"", sep = "")
-       
+{       
     command <- paste(".db.readTable.", .localVars$db[[conn.id]]$conn.pkg,
-                     "(table=\"", table, "\", row.names=", row.names,
-                     ", conn.id=", conn.id, ")", sep = "")
+                     "(table=table, row.names=row.names, conn.id=conn.id)",
+                     sep = "")
     eval(parse(text = command))
 }
 
@@ -219,14 +221,8 @@ db.list <- function ()
 
 .db.removeTable <- function(table, conn.id = 1)
 {
-    if (! .is.conn.id.valid(conn.id))
-        stop("There is no such connection!")
-
-    if (! .is.arg.string(table))
-        stop("The table name must be a string!")
-
     command <- paste(".db.removeTable.", .localVars$db[[conn.id]]$conn.pkg,
-                     "(table=\"", table, "\", conn.id=", conn.id, ")", sep = "")
+                     "(table=table, conn.id=conn.id)", sep = "")
     eval(parse(text = command))
 }
 

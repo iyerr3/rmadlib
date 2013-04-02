@@ -8,13 +8,16 @@
    A concise (1-5 lines) description of what the function does. 
 }
 \usage{
-db.disconnect(conn.id = 1)
+db.disconnect(conn.id = 1, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{conn.id}{
      Describe \code{conn.id} here
-}
+   }
+   \item{verbose}{
+     verbose
+   }
 }
 \details{
   ++ If necessary, more details than the description above ++

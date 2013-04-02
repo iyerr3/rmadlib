@@ -45,6 +45,13 @@
 
 ## ------------------------------------------------------------------------
 
+.db.fetch.rpostgresql <- function(res, n)
+{
+    RPostgreSQL::fetch(res, n)
+}
+
+## ------------------------------------------------------------------------
+
 .db.getQuery.rpostgresql <- function(query, conn.id)
 {
     RPostgreSQL::dbGetQuery(.localVars$db[[conn.id]]$conn, query)
@@ -76,9 +83,10 @@
 .db.writeTable.rpostgresql <- function (table, r.obj, row.names, 
                                         overwrite, append, distributed.by,
                                         conn.id, header, nrows = 50, sep = ",",
-                                        eol="\n", skip = 0, quote = '"', ...)
+                                        eol="\n", skip = 0, quote = '"',
+                                        field.types, ...)
 {
-    conn <- .localVars$db[[conn.id]]
+    conn <- .localVars$db[[conn.id]]$conn
     name <- table
     value <- r.obj
     ## only for GPDB
@@ -119,7 +127,7 @@
             }
             
             ## compute full path name (have R expand ~, etc)
-            fn <- file.path(dirname(value), basename(value))
+            fn <- file.path(dirname(r.obj), basename(r.obj))
             if(missing(header) || missing(row.names))
             {
                 f <- file(fn, open="r")
@@ -148,11 +156,12 @@
                 ## need to init table, say, with the first nrows lines
                 d <- read.table(fn, sep=sep, header=header, skip=skip, nrows=nrows, ...)
                 sql <-
-                    RPostgreSQL::postgresqlBuildTableDefinition(new.con, name, obj=d, field.types = field.types,
+                    RPostgreSQL::postgresqlBuildTableDefinition(new.con, name, obj=d,
+                                                                field.types = field.types,
                                                                 row.names = row.names)
                 sql <- paste(sql, dist.str)
                 rs <- try(RPostgreSQL::dbSendQuery(new.con, sql))
-                if(inherits(rs, RPostgreSQL::ErrorClass)){
+                if(inherits(rs, RPostgreSQL:::ErrorClass)){
                     warning("could not create table: aborting postgresqlImportFile")
                     return(FALSE)
                 }
@@ -175,17 +184,17 @@
                 names(r.obj)[1] <- "row.names"
             }
 
-            if(missing(field.types) || is.null(field.types))
-            {
+            if(missing(field.types) || is.null(field.types)) {
                 ## the following mapping should be coming from some kind of table
                 ## also, need to use converter functions (for dates, etc.)
                 field.types <- sapply(r.obj, RPostgreSQL::dbDataType, dbObj = conn)
             }
 
             i <- match("row.names", names(field.types), nomatch=0)
-            if(i>0) ## did we add a row.names value?  If so, it's a text field.
+            if (i>0) ## did we add a row.names r.obj?  If so, it's a text field.
                 ## MODIFIED -- Sameer
                 field.types[i] <- RPostgreSQL::dbDataType(dbObj=conn, field.types[row.names])
+            
             new.con <- conn
             
             if(RPostgreSQL::dbExistsTable(conn, name))
@@ -211,9 +220,10 @@
                 sql2 <- paste(paste(RPostgreSQL::postgresqlQuoteId(names(field.types)), field.types), collapse=",\n\t",
                               sep="")
                 sql3 <- "\n)\n"
-                sql <- paste(sql1, sql2, sql3, dist.str, sep="")
+                ## sql <- paste(sql1, sql2, sql3, dist.str, sep="")
+                sql <- paste(sql1, sql2, sql3, sep="")
                 rs <- try(RPostgreSQL::dbSendQuery(new.con, sql))
-                if(inherits(rs, RPostgreSQL::ErrorClass))
+                if(inherits(rs, RPostgreSQL:::ErrorClass))
                 {
                     warning("could not create table: aborting assignTable")
                     return(FALSE)
@@ -224,19 +234,15 @@
                 }
             }
         }
+    }
 
-        ## After the table has been created, one can append data to it
-        RPostgreSQL::dbWriteTable(conn = .localVars$db[[conn.id]]$conn,
-                                  name = table, value = r.obj, row.names = row.names,
-                                  overwrite = overwrite, append = TRUE)
-    }
-    else
-    {
-        RPostgreSQL::dbWriteTable(conn = .localVars$db[[conn.id]]$conn,
-                                  name = table, value = r.obj,
-                                  row.names = row.names, overwrite = overwrite,
-                                  append = append)
-    }
+    ## After the table has been created, one can append data to it
+    RPostgreSQL::dbWriteTable(conn = .localVars$db[[conn.id]]$conn,
+                              name = table, value = value, row.names = row.names,
+                              overwrite = overwrite, append = TRUE,
+                              header = header, nrows = nrows, sep = sep,
+                              eol=eol, skip = skip, quote = quote,
+                              field.types = field.types, ...)
 }
 
 ## ------------------------------------------------------------------------
@@ -249,7 +255,7 @@
 
 ## ------------------------------------------------------------------------
 
-.db.removeTable.rpostgressql <- function (table, conn.id)
+.db.removeTable.rpostgresql <- function (table, conn.id)
 {
     RPostgreSQL::dbRemoveTable(conn = .localVars$db[[conn.id]]$conn,
                                name = table)
