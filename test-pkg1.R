@@ -5,12 +5,18 @@ library(rmadlib)
 
 db.connect(host="localhost", user="qianh1", dbname="qianh1", port=5433)
 
+db.disconnect(2)
+
 db.list()
 
-dbname()
+dbname(2)
 
-user()
+user("a")
 
 host()
 
-conn.pkg(2)
+conn.pkg(1)
+
+rmadlib:::.db.listTables()
+
+rst <- rmadlib:::.db.getQuery("select count(*) from cvtest1")

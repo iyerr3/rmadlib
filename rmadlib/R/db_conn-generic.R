@@ -55,7 +55,7 @@ db.connect <- function (host, user, dbname, password = "", port = "",
 ## ------------------------------------------------------------------------ 
 
 ## disconnect a connection
-db.disconnect <- function (conn.id = 1)
+db.disconnect <- function (conn.id = 1, verbose = TRUE)
 {
     ## check whether this connection exists
     if (!.is.conn.id.valid(conn.id))
@@ -66,6 +66,9 @@ db.disconnect <- function (conn.id = 1)
     eval(parse(text = command))
     .localVars$db[[conn.id]] <- NULL
     .localVars$conn.type[[conn.pkg]] <- .localVars$conn.type[[conn.pkg]][-which(.localVars$conn.type[[conn.pkg]]==conn.id)]
+
+    if (verbose)
+        cat(paste("Connection", conn.id, "is disconnected!"))
 }
 
 ## ------------------------------------------------------------------------
@@ -74,7 +77,7 @@ db.disconnect <- function (conn.id = 1)
 db.list <- function ()
 {
     n.conn <- length(.localVars$db)
-    cat("Database Connection Info\n")
+    cat("\nDatabase Connection Info\n")
     for (i in seq(n.conn))
     {
         cat("\n## -------------------------------\n")
@@ -82,8 +85,12 @@ db.list <- function ()
         cat(paste("Host :     ", .localVars$db[[i]]$host, "\n", sep = ""))
         cat(paste("User :     ", .localVars$db[[i]]$user, "\n", sep = ""))
         cat(paste("Database : ", .localVars$db[[i]]$dbname, "\n", sep = ""))
-        cat(paste("Conn pkg : ", .localVars$db[[i]]$conn.pkg, "\n", sep = ""))
+        
+        pkg <- .localVars$db[[i]]$conn.pkg
+        id <- which(tolower(.supported.connections) == pkg)
+        cat(paste("Conn pkg : ", .supported.connections[id], "\n", sep = ""))
     }
+    cat("\n")
 }
 
 ## ------------------------------------------------------------------------

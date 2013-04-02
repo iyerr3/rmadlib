@@ -1,6 +1,5 @@
-\name{pkg-package}
-\alias{pkg-package}
-\alias{pkg}
+\name{rmadlib-package}
+\alias{rmadlib-package}
 \docType{package}
 \title{
 What the package does (short line)
