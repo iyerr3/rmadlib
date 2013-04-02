@@ -1,3 +1,5 @@
 # exportPattern("^[^\\.]")
 
 export("db.connect", "db.disconnect", "db.list")
+
+export ("conn.pkg", "host", "dbname", "user")

@@ -23,37 +23,36 @@
         table_name <- parts[2]
     } else if (length(parts) == 1) {
         table_name <- parts[1]
-        table_schema <- dbGetQuery(.localVars$db[[conn.id]]$con,
-                                   "select current_schema()")
+        table_schema <- .db.getQuery("select current_schema()", conn.id)
     } else {
         stop("The database object name is not valid!")
     }
-    return list(table_name = table_name,
-                table_schema = table_schema)
+    return (list(table_name = table_name,
+                table_schema = table_schema))
 }
 
 .is.table <- function (db.obj_name, conn.id = 1)
 {
     table.info <- .db.obj.info(db.obj_name, conn.id)
-    pick <- dbGetQuery(.localVars$db[[conn.id]]$con,
-                       paste("select count(*) from information_schema.tables where table_name =",
-                             table.info$table_name,
-                             "and table_schema =", table.info$table_schema))
+    pick <- .db.getQuery(.localVars$db[[conn.id]]$con,
+                         paste("select count(*) from information_schema.tables where table_name =",
+                               table.info$table_name,
+                               "and table_schema =", table.info$table_schema))
     if (pick == 1)
-        return TRUE
+        return (TRUE)
     else
-        return FALSE
+        return (FALSE)
 }
 
 .is.view <- function (db.obj_name, conn.id = 1)
 {
-    table.info <- .db.obj.info(.db.obj_name, conn.id)
-    pick <- dbGetQuery(.localVars$db[[conn.id]]$con,
-                       paste("select count(*) from information_schema.views where table_name =",
-                             table.info$table_name,
-                             "and table_schema =", table.info$table_schema))
+    table.info <- .db.obj.info(db.obj_name, conn.id)
+    pick <- .db.getQuery(.localVars$db[[conn.id]]$con,
+                         paste("select count(*) from information_schema.views where table_name =",
+                               table.info$table_name,
+                               "and table_schema =", table.info$table_schema))
     if (pick == 1)
-        return TRUE
+        return (TRUE)
     else
-        return FALSE
+        return (FALSE)
 }

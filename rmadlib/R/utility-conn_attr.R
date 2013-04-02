@@ -2,24 +2,24 @@
 ## Small utility functions to extract information
 ## about a given connection
 
-dbname <- function (con.id = 1)
+dbname <- function (conn.id = 1)
 {
-    .localVars$db[[con.id]]$dbname
+    .localVars$db[[conn.id]]$dbname
 }
 
-host <- function (con.id = 1)
+host <- function (conn.id = 1)
 {
-    .localVars$db[[con.id]]$host
+    .localVars$db[[conn.id]]$host
 }
 
-user <- function (con.id = 1)
+user <- function (conn.id = 1)
 {
-    .localVars$db[[con.id]]$user
+    .localVars$db[[conn.id]]$user
 }
 
-con.pkg <- function (con.id = 1)
+conn.pkg <- function (conn.id = 1)
 {
-    pkg <- .localVars$db[[con.id]]$rcon.pkg
+    pkg <- .localVars$db[[conn.id]]$conn.pkg
     i <- which(tolower(.supported.connections) == pkg)
     .supported.connections[i]
 }

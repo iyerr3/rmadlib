@@ -92,7 +92,7 @@ db.list <- function ()
 ## unload driver for a specific connection package
 .db.unloadDriver <- function (pkg)
 {
-    command <- paste(".db.unloadDriver.", drv, "(drv=", .localVars$drv[[pkg]], ")", sep = "")
+    command <- paste(".db.unloadDriver.", pkg, "(drv=", .localVars$drv[[pkg]], ")", sep = "")
     eval(parse(text = command))
 }
 
@@ -169,7 +169,8 @@ db.list <- function ()
 .db.writeTable <- function (table, r.obj, row.names = TRUE, 
                             overwrite = FALSE, append = FALSE,
                             distributed.by = NULL, # only for GPDB
-                            conn.id = 1)
+                            conn.id = 1, header, nrows = 50, sep = ",",
+                            eol="\n", skip = 0, quote = '"', ...)
 {
     if (! .is.conn.id.valid(conn.id))
         stop("There is no such connection!")
@@ -177,11 +178,11 @@ db.list <- function ()
     if (! .is.arg.string(table))
         stop("The table name must be a string!")
 
-    if (! is.data.frame(dframe))
+    if (! is.data.frame(r.obj))
         stop("The data must be in a data frame format!")
 
     command <- paste(".db.listTable.", .localVars$db[[conn.id]]$conn.pkg,
-                     "(table=\"", table, "\", r.obj=", dframe,
+                     "(table=\"", table, "\", r.obj=", r.obj,
                      ", row.names=", row.names, ", overwrite=", overwrite,
                      ", append=", append, ", conn.id=", conn.id, ")", sep = "")
     eval(parse(text = command))

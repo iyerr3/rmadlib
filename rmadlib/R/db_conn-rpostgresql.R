@@ -75,8 +75,12 @@
 
 .db.writeTable.rpostgresql <- function (table, r.obj, row.names, 
                                         overwrite, append, distributed.by,
-                                        conn.id)
+                                        conn.id, header, nrows = 50, sep = ",",
+                                        eol="\n", skip = 0, quote = '"', ...)
 {
+    conn <- .localVars$db[[conn.id]]
+    name <- table
+    value <- r.obj
     ## only for GPDB
     ## This why this function is so complicated
     if (is.null(distributed.by)) {
@@ -93,13 +97,13 @@
         ## need to create the table first
         if (is.character(r.obj)) # create from file
         {
-            new.con <- con
+            new.con <- conn
             
-            if(RPostgreSQL::dbExistsTable(con,name))
+            if(RPostgreSQL::dbExistsTable(conn,name))
             {
                 if(overwrite)
                 {
-                    if(!RPostgreSQL::dbRemoveTable(con, name))
+                    if(!RPostgreSQL::dbRemoveTable(conn, name))
                     {
                         warning(paste("table", name, "couldn't be overwritten"))
                         return(FALSE)
@@ -136,7 +140,7 @@
                     row.names <- FALSE
             }
             
-            new.table <- !RPostgreSQL::dbExistsTable(con, name)
+            new.table <- !RPostgreSQL::dbExistsTable(conn, name)
             if(new.table)
             {
                 ## need to init table, say, with the first nrows lines
@@ -146,7 +150,7 @@
                                                                 row.names = row.names)
                 sql <- paste(sql, dist.str)
                 rs <- try(RPostgreSQL::dbSendQuery(new.con, sql))
-                if(inherits(rs, ErrorClass)){
+                if(inherits(rs, RPostgreSQL::ErrorClass)){
                     warning("could not create table: aborting postgresqlImportFile")
                     return(FALSE)
                 }
@@ -179,7 +183,7 @@
             i <- match("row.names", names(field.types), nomatch=0)
             if(i>0) ## did we add a row.names value?  If so, it's a text field.
                 ## MODIFIED -- Sameer
-                field.types[i] <- RPostgreSQL::dbDataType(dbObj=con, field.types[row.names])
+                field.types[i] <- RPostgreSQL::dbDataType(dbObj=conn, field.types[row.names])
             new.con <- conn
             
             if(RPostgreSQL::dbExistsTable(conn, name))
@@ -207,7 +211,7 @@
                 sql3 <- "\n)\n"
                 sql <- paste(sql1, sql2, sql3, dist.str, sep="")
                 rs <- try(RPostgreSQL::dbSendQuery(new.con, sql))
-                if(inherits(rs, ErrorClass))
+                if(inherits(rs, RPostgreSQL::ErrorClass))
                 {
                     warning("could not create table: aborting assignTable")
                     return(FALSE)
