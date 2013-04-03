@@ -1,14 +1,14 @@
-\name{db.obj.table-class}
+\name{db.table-class}
 \Rdversion{1.1}
 \docType{class}
-\alias{db.obj.table-class}
+\alias{db.table-class}
 
-\title{Class \code{"db.obj.table"}}
+\title{Class \code{"db.table"}}
 \description{
 A concise (1-5 lines) description of what the class is. ~~
 }
 \section{Objects from the Class}{
-Objects can be created by calls of the form \code{new("db.obj.table", ...)}.
+Objects can be created by calls of the form \code{new("db.table", ...)}.
 describe objects here ~~ 
 }
 \section{Slots}{
@@ -24,11 +24,11 @@ describe objects here ~~
   }
 }
 \section{Extends}{
-Class \code{"\linkS4class{db.obj}"}, directly.
-Class \code{"\linkS4class{db.data.frame}"}, by class "db.obj", distance 2.
+Class \code{"\linkS4class{db.data.frame}"}, directly.
+Class \code{"\linkS4class{db.obj}"}, by class "db.data.frame", distance 2.
 }
 \section{Methods}{
-No methods defined with class "db.obj.table" in the signature.
+No methods defined with class "db.table" in the signature.
 }
 \references{
 put references to the literature/web site here~~
@@ -48,6 +48,6 @@ further notes~~
 %%  ~~or \code{\linkS4class{CLASSNAME}} for links to other classes ~~~
 }
 \examples{
-showClass("db.obj.table")
+showClass("db.table")
 }
 \keyword{classes}

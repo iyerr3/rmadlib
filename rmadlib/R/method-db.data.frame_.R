@@ -12,7 +12,7 @@ setGeneric("db.data.frame",
 setMethod("db.data.frame",
           signature(x = "character"),
           def = function (x, conn.id, id.col) .method.db.data.frame.1(x, conn.id, id.col),
-          valueClass = "db.obj")
+          valueClass = "db.data.frame")
 
 ## ------------------------------------------------------------------------
 
@@ -28,14 +28,14 @@ setMethod("db.data.frame",
     if (.is.view(table, conn.id))
     {
         ## view
-        res <- new("db.obj.view",
+        res <- new("db.view",
                    .name = table,
                    .conn.id = conn.id)
     }
     else
     {
         ## table
-        res <- new("db.obj.table",
+        res <- new("db.table",
                    .name = table,
                    .conn.id = conn.id,
                    .id.col = id.col)
@@ -62,9 +62,9 @@ setMethod("db.data.frame",
 ## ------------------------------------------------------------------------
 
 setMethod("db.data.frame",
-          signature(x = "query.obj"),
+          signature(x = "db.Rquery"),
           def = function (x) .method.db.data.frame.2(x),
-          valueClass = "db.obj")
+          valueClass = "db.data.frame")
 
 ## ------------------------------------------------------------------------
 

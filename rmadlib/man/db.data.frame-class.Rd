@@ -5,9 +5,25 @@
 
 \title{Class \code{"db.data.frame"}}
 \description{
-A concise (1-5 lines) description of what the class is. ~~
+ A concise (1-5 lines) description of what the class is. ~~
 }
-\section{Objects from the Class}{A virtual Class: No objects may be created from it.}
+\section{Objects from the Class}{
+Objects can be created by calls of the form \code{new("db.data.frame", ...)}.
+ describe objects here ~~ 
+}
+\section{Slots}{
+  \describe{
+    \item{\code{.name}:}{Object of class \code{"character"} ~~ }
+    \item{\code{.conn.id}:}{Object of class \code{"numeric"} ~~ }
+    \item{\code{.col.name}:}{Object of class \code{"character"} ~~ }
+    \item{\code{.col.data_type}:}{Object of class \code{"character"} ~~ }
+    \item{\code{.col.udt_name}:}{Object of class \code{"character"} ~~ }
+    \item{\code{.table.type}:}{Object of class \code{"character"} ~~ }
+  }
+}
+\section{Extends}{
+Class \code{"\linkS4class{db.obj}"}, directly.
+}
 \section{Methods}{
 No methods defined with class "db.data.frame" in the signature.
 }
@@ -26,7 +42,7 @@ further notes~~
 \seealso{
   objects to See Also
   %as \code{\link{~~fun~~}}, ~~~
-%or \code{\linkS4class{CLASSNAME}} for links to other classes ~~~
+%%  ~~or \code{\linkS4class{CLASSNAME}} for links to other classes ~~~
 }
 \examples{
 showClass("db.data.frame")

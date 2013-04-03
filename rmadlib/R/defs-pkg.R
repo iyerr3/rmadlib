@@ -43,7 +43,7 @@
 
 ## The R object has its corresponding table/view in database
 ## object in database
-setClass("db.obj",
+setClass("db.data.frame",
          representation(
              .name = "character", # object name
              .conn.id = "numeric", # connection ID
@@ -56,19 +56,19 @@ setClass("db.obj",
          )
 
 ## table, a sub-class of db.obj
-setClass("db.obj.table",
+setClass("db.table",
          representation(
              .id.col = "character", # which column is used to identify different rows,
                                         # i.e. index
              .dim = "numeric" # dimension of table
              ),
-         contains = "db.obj")
+         contains = "db.data.frame")
 
 ## view, a sub-class of db.obj
-setClass("db.obj.view",
+setClass("db.view",
          representation(
              ),
-         contains = "db.obj")
+         contains = "db.data.frame")
 
 ## ------------------------------------------------------------------------
 
@@ -79,7 +79,7 @@ setClass("db.obj.view",
 ## a db.obj
 ## More precisely, it is a view existing in R only
 ## It can be converted into db.obj objects
-setClass("query.obj",
+setClass("db.Rquery",
          representation(
              .query = "character",
              .conn.id = "numeric"
@@ -92,4 +92,4 @@ setClass("query.obj",
 ## defined in the above.
 ## Many functions in this package should operate on both classes.
 ## So we define this abstract class.
-setClassUnion("db.data.frame", members = c("db.obj", "query.obj"))
+setClassUnion("db.obj", members = c("db.data.frame", "db.Rquery"))
