@@ -5,6 +5,22 @@
 
 ## ------------------------------------------------------------------------
 
+## convert {...} string into an array
+.db.str2vec <- function (str, type = "double")
+{
+    elm <- regmatches(str, gregexpr("[^,\"\\s\\{\\}]+|\"(\\\"|[^\"])*\"", str, perl=T))[[1]]
+    if (type == "character")
+        return (elm)
+    else if (type == "integer")
+        return (as.integer(elm))
+    else if (type == "logical")
+        return (as.logical(toupper(elm)))
+    else
+        return (as.numeric(elm))
+}
+
+## ------------------------------------------------------------------------
+
 .is.arg.string <- function (arg)
 {
     is.character(arg)
