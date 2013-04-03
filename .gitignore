@@ -2,3 +2,4 @@ random.walk.on.network/*
 .Rhistory
 rmadlib.Rcheck/*
 rmadlib*.tar.gz
+*.swp

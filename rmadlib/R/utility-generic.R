@@ -3,17 +3,21 @@
 
 ## Check arguments of function to make sure that they are legal
 
-## ----------------------------------------------------------------
+## ------------------------------------------------------------------------
 
 .is.arg.string <- function (arg)
 {
     is.character(arg)
 }
 
+## ------------------------------------------------------------------------
+
 .is.conn.id.valid <- function (conn.id)
 {
     !is.na(conn.id) && conn.id >= 1 && conn.id <= length(.localVars$db)
 }
+
+## ------------------------------------------------------------------------
 
 .db.obj.info <- function (db.obj_name, conn.id = 1)
 {
@@ -31,6 +35,8 @@
                 table_schema = table_schema))
 }
 
+## ------------------------------------------------------------------------
+
 .is.table <- function (db.obj_name, conn.id = 1)
 {
     table.info <- .db.obj.info(db.obj_name, conn.id)
@@ -43,6 +49,8 @@
     else
         return (FALSE)
 }
+
+## ------------------------------------------------------------------------
 
 .is.view <- function (db.obj_name, conn.id = 1)
 {
