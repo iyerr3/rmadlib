@@ -1,0 +1,1 @@
+package.skeleton(name = "rmadlib", code_files = c("db_conn-generic.R", "defs-pkg.R", "onAttach.R", "utility-conn_attr.R", "db_conn-rpostgresql.R", "method-db.data.frame_.R", "onUnload.R", "utility-generic.R"))

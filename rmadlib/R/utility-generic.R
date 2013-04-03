@@ -47,19 +47,19 @@
     } else {
         stop("The database object name is not valid!")
     }
-    return (list(table_name = table_name,
-                table_schema = table_schema))
+    return (c(table_schema, table_name))
 }
 
 ## ------------------------------------------------------------------------
 
-.is.table <- function (db.obj_name, conn.id = 1)
+## Is the object in database a table?
+.is.table.or.view <- function (db.obj_name, conn.id = 1)
 {
-    table.info <- .db.obj.info(db.obj_name, conn.id)
+    table <- .db.obj.info(db.obj_name, conn.id)
     pick <- .db.getQuery(.localVars$db[[conn.id]]$con,
                          paste("select count(*) from information_schema.tables where table_name =",
-                               table.info$table_name,
-                               "and table_schema =", table.info$table_schema))
+                               table[2],
+                               "and table_schema =", table[1]))
     if (pick == 1)
         return (TRUE)
     else
@@ -68,13 +68,14 @@
 
 ## ------------------------------------------------------------------------
 
+## Is the object in database a view?
 .is.view <- function (db.obj_name, conn.id = 1)
 {
-    table.info <- .db.obj.info(db.obj_name, conn.id)
+    table <- .db.obj.info(db.obj_name, conn.id)
     pick <- .db.getQuery(.localVars$db[[conn.id]]$con,
                          paste("select count(*) from information_schema.views where table_name =",
-                               table.info$table_name,
-                               "and table_schema =", table.info$table_schema))
+                               table[2],
+                               "and table_schema =", table[1]))
     if (pick == 1)
         return (TRUE)
     else

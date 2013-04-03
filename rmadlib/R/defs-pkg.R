@@ -48,9 +48,10 @@ setClass("db.obj",
              .name = "character", # object name
              .conn.id = "numeric", # connection ID
              ## table properties
-             .col.names = "character", # column names
-             .col.types = "character", # column types
-             .is.temp = "logical" # is the object temp ?
+             .col.name = "character", # column names
+             .col.data_type = "character", # column types
+             .col.udt_name = "character",
+             .table.type = "character" # is the object temp ?
              )
          )
 

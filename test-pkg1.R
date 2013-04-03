@@ -17,15 +17,23 @@ host()
 
 conn.pkg(1)
 
+.db.getQuery <- function(query, conn.id) rmadlib:::.db.getQuery(query, conn.id)
+
 rmadlib:::.db.listTables()
+
+rmadlib:::.is.table("cvtest1")
 
 rst <- rmadlib:::.db.getQuery("select count(*) from cvtest1")
 
 rst <- rmadlib:::.db.sendQuery("select count(*) from cvtest1")
 
+rst <- rmadlib:::.db.getQuery("select column_name, data_type from information_schema.columns where table_name = 'cvtest'")
+
 rmadlib:::.db.fetch(rst)
 
-rmadlib:::.db.existsTable("cvtest1")
+rmadlib:::.db.existsTable("cvtest")
+
+rmadlib:::.db.existsTable("tv")
 
 rmadlib:::.db.existsTable(c("madlibtestdata", "lin_redundantobservations_oi"))
 
