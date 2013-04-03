@@ -21,6 +21,9 @@ setMethod ("db.data.frame",
     if (missing(conn.id)) conn.id <- 1 # default value in S4 context
     if (missing(id.col)) id.col <- character(0) # no ID column
 
+    if (!.is.conn.id.valid(conn.id))
+        stop("There is no such a connection to any database!")
+
     table <- .db.obj.info(x) # a vector (schema_name, table_name)
     if (!.is.table.or.view(table, conn.id))
         stop("No such table or view!")
@@ -30,6 +33,7 @@ setMethod ("db.data.frame",
         ## view
         res <- new("db.view",
                    .name = table,
+                   .content = x,
                    .conn.id = conn.id)
     }
     else
@@ -37,6 +41,7 @@ setMethod ("db.data.frame",
         ## table
         res <- new("db.table",
                    .name = table,
+                   .content = x,
                    .conn.id = conn.id,
                    .id.col = id.col)
         

@@ -45,7 +45,8 @@
 ## object in database
 setClass("db.data.frame",
          representation(
-             .name = "character", # object name
+             .name = "character", # c(schema_name, table/view_name)
+             .content = "character", # object name (schema.table)
              .conn.id = "numeric", # connection ID
              ## table properties
              .col.name = "character", # column names
@@ -81,7 +82,7 @@ setClass("db.view",
 ## It can be converted into db.obj objects
 setClass("db.Rquery",
          representation(
-             .query = "character",
+             .content = "character",
              .conn.id = "numeric"
              )
          )

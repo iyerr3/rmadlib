@@ -12,3 +12,13 @@ setMethod ("names",
            function (x) {
                x@.col.name
            })
+
+## ------------------------------------------------------------------------
+
+content <- function (x)
+{
+    if (! inherits(x, "db.obj"))
+        stop("The argument must be a db.obj-class object!")
+
+    x@.content
+}

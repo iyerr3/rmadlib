@@ -47,7 +47,7 @@ db.connect <- function (host, user, dbname, password = "", port = "",
                          "\", password=\"", password, "\", port=", port,
                          ")", sep = "")
         result <- eval(parse(text = command))
-        cat(paste("Created a connection to database with ID", result))
+        cat(paste("Created a connection to database with ID", result, "\n"))
         return (result)
     }
     else

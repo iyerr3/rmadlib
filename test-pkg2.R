@@ -17,7 +17,6 @@ conn.pkg(1)
 x <- db.data.frame("madlibtestdata.lin_redundantobservations_oi")
 
 rmadlib:::.db.listTables()
-
 rmadlib:::.is.table.or.view("cvtest1")
 
 rst <- rmadlib:::.db.getQuery("select count(*) from cvtest1")

@@ -9,3 +9,5 @@ export ("db.data.frame")
 exportClasses ("db.obj", "db.Rquery", "db.data.frame", "db.table", "db.view")
 
 exportMethods ("dim", "names")
+
+export ("content")
