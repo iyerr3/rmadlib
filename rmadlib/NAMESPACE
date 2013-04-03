@@ -6,4 +6,6 @@ export ("conn.pkg", "host", "dbname", "user")
 
 export ("db.data.frame")
 
-exportClasses("db.obj", "db.Rquery", "db.data.frame", "db.table", "db.view")
+exportClasses ("db.obj", "db.Rquery", "db.data.frame", "db.table", "db.view")
+
+exportMethods ("dim", "names")

@@ -53,13 +53,11 @@
 ## ------------------------------------------------------------------------
 
 ## Is the object in database a table?
-.is.table.or.view <- function (db.obj_name, conn.id = 1)
+.is.table.or.view <- function (table, conn.id = 1)
 {
-    table <- .db.obj.info(db.obj_name, conn.id)
-    pick <- .db.getQuery(.localVars$db[[conn.id]]$con,
-                         paste("select count(*) from information_schema.tables where table_name =",
+    pick <- .db.getQuery(paste("select count(*) from information_schema.tables where table_name = '",
                                table[2],
-                               "and table_schema =", table[1]))
+                               "' and table_schema ='", table[1], "'", sep = ""), conn.id)
     if (pick == 1)
         return (TRUE)
     else
@@ -69,13 +67,11 @@
 ## ------------------------------------------------------------------------
 
 ## Is the object in database a view?
-.is.view <- function (db.obj_name, conn.id = 1)
+.is.view <- function (table, conn.id = 1)
 {
-    table <- .db.obj.info(db.obj_name, conn.id)
-    pick <- .db.getQuery(.localVars$db[[conn.id]]$con,
-                         paste("select count(*) from information_schema.views where table_name =",
+    pick <- .db.getQuery(paste("select count(*) from information_schema.views where table_name = '",
                                table[2],
-                               "and table_schema =", table[1]))
+                               "' and table_schema = '", table[1], "'", sep = ""), conn.id)
     if (pick == 1)
         return (TRUE)
     else
