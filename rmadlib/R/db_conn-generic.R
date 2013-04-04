@@ -13,7 +13,7 @@
 ## be automatically installed
 ## A driver will be automatically created for connection package
 db.connect <- function (host, user, dbname, password = "", port = "",
-                        conn.pkg = "RPostgreSQL")
+                        madlib = "madlib", conn.pkg = "RPostgreSQL")
 {
     ## available packages, to check whether RODBC and RPostgreSQL are
     ## already installed
@@ -45,6 +45,7 @@ db.connect <- function (host, user, dbname, password = "", port = "",
         command <- paste(".db.connect.", conn.pkg.name, "(host=\"", host,
                          "\", user=\"", user, "\", dbname=\"", dbname,
                          "\", password=\"", password, "\", port=", port,
+                         ", madlib=\"", madlib, "\""
                          ")", sep = "")
         result <- eval(parse(text = command))
         cat(paste("Created a connection to database with ID", result, "\n"))

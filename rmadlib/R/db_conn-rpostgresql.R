@@ -4,7 +4,7 @@
 ### Database related utilities, using RPostgreSQL to connect
 
 ## ------------------------------------------------------------------------
-.db.connect.rpostgresql <- function(host, user, dbname, password, port)
+.db.connect.rpostgresql <- function(host, user, dbname, password, port, madlib)
 {
     if (is.null(.localVars$drv$rpostgresql))
         .localVars$drv$rpostgresql <- DBI::dbDriver("PostgreSQL")
@@ -27,7 +27,8 @@
         user = user,
         dbname = dbname, # database name
         # which R package is used to connected to database
-        conn.pkg = "rpostgresql" 
+        conn.pkg = "rpostgresql"
+        madlib = madlib # madlib schema name
         )
 
     .localVars$conn.id <- rbind(.localVars$conn.id,
