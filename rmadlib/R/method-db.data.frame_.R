@@ -3,25 +3,11 @@
 ## create a R object that points to something inside the database
 ## ------------------------------------------------------------------------
 
-setGeneric ("db.data.frame",
-            def = function (x, ...) standardGeneric("db.data.frame"),
-            signature = c("x"))
-
-## ------------------------------------------------------------------------
-
-setMethod ("db.data.frame",
-           signature(x = "character"),
-           def = function (x, conn.id, id.col) .method.db.data.frame.1(x, conn.id, id.col),
-           valueClass = "db.data.frame")
-
-## ------------------------------------------------------------------------
-
-.method.db.data.frame.1 <- function (x, conn.id, id.col)
+db.data.frame <- function (x, conn.id = 1, id.col = character(0))
 {
-    if (missing(conn.id)) conn.id <- 1 # default value in S4 context
-    if (missing(id.col)) id.col <- character(0) # no ID column
-
-    if (!.is.conn.id.valid(conn.id))
+    if (! .is.arg.string(x))
+        stop("The name of the database object must be a string!")
+    if (! .is.conn.id.valid(conn.id))
         stop("There is no such a connection to any database!")
 
     table <- .db.obj.info(x) # a vector (schema_name, table_name)

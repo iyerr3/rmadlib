@@ -10,16 +10,33 @@
         .localVars$drv$rpostgresql <- DBI::dbDriver("PostgreSQL")
     
     n.db <- length(.localVars$db)
-    db.connection <- RPostgreSQL::dbConnect(.localVars$drv$rpostgresql, host=host, user=user, dbname=dbname, password=password, port = port)
+    db.connection <- RPostgreSQL::dbConnect(.localVars$drv$rpostgresql,
+                                            host=host, user=user,
+                                            dbname=dbname,
+                                            password=password,
+                                            port = port)
+    if (length(.localVars$conn.id) == 0)
+        conn.id <- 1
+    else
+        conn.id <- max(.localVars$conn.id[,2]) + 1
+    
     .localVars$db[[n.db+1]] <- list(
-                               conn = db.connection,
-                               host = host,
-                               user = user,
-                               dbname = dbname, # database name
-                               conn.pkg = "rpostgresql" # which R package is used to connected to database
-                               )
-    .localVars$conn.type[["rpostgresql"]] <- c(.localVars$conn.type[["rpostgresql"]], n.db+1)
-    return(n.db + 1) # return the connection ID
+        conn = db.connection,
+        conn.id = conn.id,
+        host = host,
+        user = user,
+        dbname = dbname, # database name
+        # which R package is used to connected to database
+        conn.pkg = "rpostgresql" 
+        )
+
+    .localVars$conn.id <- rbind(.localVars$conn.id,
+                                   c(conn.id, n.db + 1))
+    
+    .localVars$conn.type[["rpostgresql"]] <- c(
+        .localVars$conn.type[["rpostgresql"]],
+        conn.id)
+    return(conn.id) # return the connection ID
 }
 
 ## ------------------------------------------------------------------------
@@ -31,16 +48,16 @@
 
 ## ------------------------------------------------------------------------
 
-.db.disconnect.rpostgresql <- function(conn.id)
+.db.disconnect.rpostgresql <- function(idx)
 {
-    RPostgreSQL::dbDisconnect (.localVars$db[[conn.id]]$conn)
+    RPostgreSQL::dbDisconnect (.localVars$db[[idx]]$conn)
 }
 
 ## ------------------------------------------------------------------------
 
-.db.sendQuery.rpostgresql <- function(query, conn.id)
+.db.sendQuery.rpostgresql <- function(query, idx)
 {
-    RPostgreSQL::dbSendQuery(.localVars$db[[conn.id]]$conn, query)
+    RPostgreSQL::dbSendQuery(.localVars$db[[idx]]$conn, query)
 }
 
 ## ------------------------------------------------------------------------
@@ -52,41 +69,41 @@
 
 ## ------------------------------------------------------------------------
 
-.db.getQuery.rpostgresql <- function(query, conn.id)
+.db.getQuery.rpostgresql <- function(query, idx)
 {
-    RPostgreSQL::dbGetQuery(.localVars$db[[conn.id]]$conn, query)
+    RPostgreSQL::dbGetQuery(.localVars$db[[idx]]$conn, query)
 }
 
 ## ------------------------------------------------------------------------
 
-.db.listTables.rpostgresql <- function(conn.id)
+.db.listTables.rpostgresql <- function(idx)
 {
-    RPostgreSQL::dbListTables(.localVars$db[[conn.id]]$conn)
+    RPostgreSQL::dbListTables(.localVars$db[[idx]]$conn)
 }
 
 ## ------------------------------------------------------------------------
 
-.db.existsTable.rpostgresql <- function(table, conn.id)
+.db.existsTable.rpostgresql <- function(table, idx)
 {
-    RPostgreSQL::dbExistsTable(.localVars$db[[conn.id]]$conn, table)
+    RPostgreSQL::dbExistsTable(.localVars$db[[idx]]$conn, table)
 }
 
 ## ------------------------------------------------------------------------
 
-.db.listFields.rpostgresql <- function(table, conn.id)
+.db.listFields.rpostgresql <- function(table, idx)
 {
-    RPostgreSQL::dbListFields(.localVars$db[[conn.id]]$conn, table)
+    RPostgreSQL::dbListFields(.localVars$db[[idx]]$conn, table)
 }
 
 ## ------------------------------------------------------------------------
 
 .db.writeTable.rpostgresql <- function (table, r.obj, row.names, 
                                         overwrite, append, distributed.by,
-                                        conn.id, header, nrows = 50, sep = ",",
+                                        idx, header, nrows = 50, sep = ",",
                                         eol="\n", skip = 0, quote = '"',
                                         field.types, ...)
 {
-    conn <- .localVars$db[[conn.id]]$conn
+    conn <- .localVars$db[[idx]]$conn
     name <- table
     value <- r.obj
     ## only for GPDB
@@ -237,7 +254,7 @@
     }
 
     ## After the table has been created, one can append data to it
-    RPostgreSQL::dbWriteTable(conn = .localVars$db[[conn.id]]$conn,
+    RPostgreSQL::dbWriteTable(conn = .localVars$db[[idx]]$conn,
                               name = table, value = value, row.names = row.names,
                               overwrite = overwrite, append = TRUE,
                               header = header, nrows = nrows, sep = sep,
@@ -247,16 +264,16 @@
 
 ## ------------------------------------------------------------------------
 
-.db.readTable.rpostgresql <- function (table, row.names, conn.id)
+.db.readTable.rpostgresql <- function (table, row.names, idx)
 {
-    RPostgreSQL::dbReadTable(conn = .localVars$db[[conn.id]]$conn,
+    RPostgreSQL::dbReadTable(conn = .localVars$db[[idx]]$conn,
                              name = table, row.names = row.names)
 }
 
 ## ------------------------------------------------------------------------
 
-.db.removeTable.rpostgresql <- function (table, conn.id)
+.db.removeTable.rpostgresql <- function (table, idx)
 {
-    RPostgreSQL::dbRemoveTable(conn = .localVars$db[[conn.id]]$conn,
+    RPostgreSQL::dbRemoveTable(conn = .localVars$db[[idx]]$conn,
                                name = table)
 }

@@ -65,13 +65,22 @@ db.disconnect <- function (conn.id = 1, verbose = TRUE)
     if (!.is.conn.id.valid(conn.id))
         stop("There is no such connection!")
 
-    conn.pkg <- .localVars$db[[conn.id]]$conn.pkg
-    command <- paste(".db.disconnect.", conn.pkg, "(conn.id=", conn.id, ")", sep = "")
+    idx <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
+    conn.pkg <- .localVars$db[[idx]]$conn.pkg
+    command <- paste(".db.disconnect.", conn.pkg, "(idx=", idx, ")", sep = "")
     res <- eval(parse(text = command))
     if (res)
     {
         .localVars$db[[conn.id]] <- NULL
         .localVars$conn.type[[conn.pkg]] <- .localVars$conn.type[[conn.pkg]][-which(.localVars$conn.type[[conn.pkg]]==conn.id)]
+        .localVars$conn.id <- .localVars$conn.id[.localVars$conn.id[,1] != conn.id,] # delete the conn.id from the array
+
+        ## update conn.id mapping info
+        for (i in seq_len(length(.localVars$db)))
+        {
+            id <- .localVars$db[[i]]$conn.id
+            .localVars$conn.id[.localVars$conn.id[,1] == id, 2] <- i
+        }
 
         if (verbose)
             cat(paste("Connection", conn.id, "is disconnected!\n"))
@@ -98,15 +107,16 @@ db.list <- function ()
     }
     else
     {
-        for (i in seq(n.conn))
+        for (i in seq_len(dim(.localVars$conn.id)[1]))
         {
+            idx <- .localVars$conn.id[i,]
             cat("\n## -------------------------------\n")
-            cat(paste("[Connection ID ", i, "]\n", sep = ""))
-            cat(paste("Host :     ", .localVars$db[[i]]$host, "\n", sep = ""))
-            cat(paste("User :     ", .localVars$db[[i]]$user, "\n", sep = ""))
-            cat(paste("Database : ", .localVars$db[[i]]$dbname, "\n", sep = ""))
+            cat(paste("[Connection ID ", idx[1], "]\n", sep = ""))
+            cat(paste("Host :     ", .localVars$db[[idx[2]]]$host, "\n", sep = ""))
+            cat(paste("User :     ", .localVars$db[[idx[2]]]$user, "\n", sep = ""))
+            cat(paste("Database : ", .localVars$db[[idx[2]]]$dbname, "\n", sep = ""))
             
-            pkg <- .localVars$db[[i]]$conn.pkg
+            pkg <- .localVars$db[[idx[2]]]$conn.pkg
             id <- which(tolower(.supported.connections) == pkg)
             cat(paste("Conn pkg : ", .supported.connections[id], "\n", sep = ""))
         }
@@ -123,8 +133,8 @@ db.list <- function ()
 ## fetch the result of sendQuery
 .db.fetch <- function (res, n = 500)
 {
-    conn.id <- res$conn.id
-    command <- paste(".db.fetch.", .localVars$db[[conn.id]]$conn.pkg, "(res = res$res, n = n)", sep = "")
+    idx <- .localVars$conn.id[.localVars$conn.id[,1] == res$conn.id, 2]
+    command <- paste(".db.fetch.", .localVars$db[[idx]]$conn.pkg, "(res = res$res, n = n)", sep = "")
     eval(parse(text = command))
 }
 
@@ -142,8 +152,9 @@ db.list <- function ()
 
 .db.sendQuery <- function (query, conn.id = 1)
 {
-    command <- paste(".db.sendQuery.", .localVars$db[[conn.id]]$conn.pkg,
-                     "(query=query, conn.id=conn.id)", sep = "")
+    id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
+    command <- paste(".db.sendQuery.", .localVars$db[[id]]$conn.pkg,
+                     "(query=query, idx=id)", sep = "")
     list(res = eval(parse(text = command)), conn.id = conn.id)
 }
 
@@ -151,8 +162,9 @@ db.list <- function ()
 
 .db.getQuery <- function (query, conn.id = 1)
 {
-    command <- paste(".db.getQuery.", .localVars$db[[conn.id]]$conn.pkg,
-                     "(query=query, conn.id=conn.id)", sep = "")
+    id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
+    command <- paste(".db.getQuery.", .localVars$db[[id]]$conn.pkg,
+                     "(query=query, idx=id)", sep = "")
     eval(parse(text = command))
 }
 
@@ -160,8 +172,9 @@ db.list <- function ()
 
 .db.listTables <- function (conn.id = 1)
 {
-    command <- paste(".db.listTables.", .localVars$db[[conn.id]]$conn.pkg,
-                     "(conn.id=conn.id)", sep = "")
+    id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
+    command <- paste(".db.listTables.", .localVars$db[[id]]$conn.pkg,
+                     "(idx=id)", sep = "")
     eval(parse(text = command))
 }
 
@@ -169,8 +182,9 @@ db.list <- function ()
 
 .db.existsTable <- function (table, conn.id = 1)
 {
-    command <- paste(".db.existsTable.", .localVars$db[[conn.id]]$conn.pkg,
-                     "(table=table, conn.id=conn.id)", sep = "")
+    id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
+    command <- paste(".db.existsTable.", .localVars$db[[id]]$conn.pkg,
+                     "(table=table, idx=id)", sep = "")
     eval(parse(text = command))
 }
 
@@ -178,8 +192,9 @@ db.list <- function ()
 
 .db.listFields <- function (table, conn.id = 1)
 {
-    command <- paste(".db.listFields.", .localVars$db[[conn.id]]$conn.pkg,
-                     "(table=table, conn.id=conn.id)", sep = "")
+    id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
+    command <- paste(".db.listFields.", .localVars$db[[id]]$conn.pkg,
+                     "(table=table, idx=id)", sep = "")
     eval(parse(text = command))
 }
 
@@ -191,10 +206,11 @@ db.list <- function ()
                             conn.id = 1, header, nrows = 50, sep = ",",
                             eol="\n", skip = 0, quote = '"', ...)
 {
-    command <- paste(".db.writeTable.", .localVars$db[[conn.id]]$conn.pkg,
+    id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
+    command <- paste(".db.writeTable.", .localVars$db[[id]]$conn.pkg,
                      "(table=table, r.obj=r.obj, row.names=row.names,
                       overwrite=overwrite, append=append,
-                      distributed.by=distributed.by, conn.id=conn.id,
+                      distributed.by=distributed.by, idx=id,
                       header=header, nrows=nrows, sep=sep, eol=eol,
                       skip=skip, quote=quote, ...)",
                      sep = "")
@@ -204,9 +220,10 @@ db.list <- function ()
 ## ------------------------------------------------------------------------
 
 .db.readTable <- function (table, rown.names = "row.names", conn.id = 1)
-{       
-    command <- paste(".db.readTable.", .localVars$db[[conn.id]]$conn.pkg,
-                     "(table=table, row.names=row.names, conn.id=conn.id)",
+{
+    id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
+    command <- paste(".db.readTable.", .localVars$db[[id]]$conn.pkg,
+                     "(table=table, row.names=row.names, idx=id)",
                      sep = "")
     eval(parse(text = command))
 }
@@ -215,8 +232,9 @@ db.list <- function ()
 
 .db.removeTable <- function(table, conn.id = 1)
 {
-    command <- paste(".db.removeTable.", .localVars$db[[conn.id]]$conn.pkg,
-                     "(table=table, conn.id=conn.id)", sep = "")
+    id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
+    command <- paste(".db.removeTable.", .localVars$db[[id]]$conn.pkg,
+                     "(table=table, idx=id)", sep = "")
     eval(parse(text = command))
 }
 

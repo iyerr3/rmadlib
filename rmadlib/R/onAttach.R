@@ -6,6 +6,13 @@
 {
     ## manage database connections
     .localVars$db <- list()
+
+    ## store the connection ID
+    ## A n x 2 matrix, first column is conn.id,
+    ## second is the index for db list
+    ## It maps conn.id to the connection object stored
+    ## in .localVars$db
+    .localVars$conn.id <- integer(0) 
     
     ## R connection package
     ## right now, only support RPostgreSQL

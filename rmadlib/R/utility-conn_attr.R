@@ -6,28 +6,32 @@ dbname <- function (conn.id = 1)
 {
     if (!.is.conn.id.valid(conn.id))
         stop("There is no such connection!")
-    .localVars$db[[conn.id]]$dbname
+    id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
+    .localVars$db[[id]]$dbname
 }
 
 host <- function (conn.id = 1)
 {
     if (!.is.conn.id.valid(conn.id))
         stop("There is no such connection!")
-    .localVars$db[[conn.id]]$host
+    id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
+    .localVars$db[[id]]$host
 }
 
 user <- function (conn.id = 1)
 {
     if (!.is.conn.id.valid(conn.id))
         stop("There is no such connection!")
-    .localVars$db[[conn.id]]$user
+    id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
+    .localVars$db[[id]]$user
 }
 
 conn.pkg <- function (conn.id = 1)
 {
     if (!.is.conn.id.valid(conn.id))
         stop("There is no such connection!")
-    pkg <- .localVars$db[[conn.id]]$conn.pkg
+    id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
+    pkg <- .localVars$db[[id]]$conn.pkg
     i <- which(tolower(.supported.connections) == pkg)
     .supported.connections[i]
 }
