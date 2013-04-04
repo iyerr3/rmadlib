@@ -18,7 +18,7 @@ setMethod ("as.db.data.frame",
                if (!.is.conn.id.valid(conn.id))
                    stop("There is no such a connection!")
                if (!.is.arg.string(table.name) ||
-                   nchar(table.name) != 0)
+                   nchar(table.name) == 0)
                    stop("The table name is not quite right!")
                ## if (missing(distributed.by)) distributed.by <- NULL
                ## if (missing(is.temp)) is.temp <- FALSE
@@ -26,12 +26,12 @@ setMethod ("as.db.data.frame",
                
                table <- .db.analyze.table.name(table.name)
                if ((!is.temp && .db.existsTable(table, conn.id)) ||
-                   (is.temp && .db.existsTempTable(table, conn.id)))
+                   (is.temp && .db.existsTempTable(table, conn.id)[[1]]))
                    stop("Table already exists!")
                
-               z <- cbind(attr(x, "row.names"), x)
-               colnames(z) <- c("row.names", names(x))
-               .db.writeTable(table, z, row.names = TRUE, distributed.by = distributed.by,
+               z <- cbind(as.integer(attr(x, "row.names")), x)
+               names(z)[1] <- "row.names"
+               .db.writeTable(table, z, row.names = FALSE, distributed.by = distributed.by,
                               is.temp = is.temp)
                
                db.data.frame(table.name, conn.id, id.col)

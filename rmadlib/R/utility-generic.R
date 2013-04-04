@@ -44,35 +44,35 @@
 
 ## It is a little bit more complicated when schema name is not given.
 ## The table might be a temporary table, or a normal table. 
-.db.obj.info <- function (db.obj_name, conn.id = 1)
-{
-    parts <- strsplit(db.obj_name, "\\.")[[1]]
-    if (length(parts) == 2) {
-        table_schema <- parts[1]
-        table_name <- parts[2]
-    } else if (length(parts) == 1) {
-        table_name <- parts[1]
+## .db.obj.info <- function (db.obj_name, conn.id = 1)
+## {
+##     parts <- strsplit(db.obj_name, "\\.")[[1]]
+##     if (length(parts) == 2) {
+##         table_schema <- parts[1]
+##         table_name <- parts[2]
+##     } else if (length(parts) == 1) {
+##         table_name <- parts[1]
    
-        schemas <- .db.str2vec(.db.getQuery("select current_schemas(True)", conn.id),
-                               type = "character")
-        table_schema <- NULL
-        for (schema in schemas)
-        {
-            if (.db.existsTable(c(schema, table_name), conn.id)) {
-                table_schema <- schema
-                break
-            }
-        }
+##         schemas <- .db.str2vec(.db.getQuery("select current_schemas(True)", conn.id),
+##                                type = "character")
+##         table_schema <- NULL
+##         for (schema in schemas)
+##         {
+##             if (.db.existsTable(c(schema, table_name), conn.id)) {
+##                 table_schema <- schema
+##                 break
+##             }
+##         }
         
-        ## No such table, going to create a new one
-        ## usually in public
-        if (is.null(table_schema))
-            table_schema <- .db.getQuery("select current_schema()", conn.id)        
-    } else {
-        stop("The database object name is not valid!")
-    }
-    return (c(table_schema, table_name))
-}
+##         ## No such table, going to create a new one
+##         ## usually in public
+##         if (is.null(table_schema))
+##             table_schema <- .db.getQuery("select current_schema()", conn.id)        
+##     } else {
+##         stop("The database object name is not valid!")
+##     }
+##     return (c(table_schema, table_name))
+## }
 
 ## ------------------------------------------------------------------------
 
@@ -81,7 +81,7 @@
 {
     parts <- strsplit(name, "\\.")[[1]]
     l <- length(parts)
-    if (l != 1 || l != 2)
+    if (l != 1 && l != 2)
         stop("The database object name is not valid!")
     return (parts)
 }

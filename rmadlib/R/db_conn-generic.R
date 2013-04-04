@@ -195,7 +195,7 @@ db.list <- function ()
     {
         schema.str <- strsplit(table[1], "_")[[1]]
         if (schema.str[1] != "pg" || schema.str[2] != "temp")
-            return (FALSE)
+            return (list(FALSE, table))
     }
     else
     {
@@ -209,13 +209,14 @@ db.list <- function ()
                 break
             }
         }
-
-        if (is.null(table_schema)) return (FALSE)
+        
+        if (is.null(table_schema)) return (list(FALSE, table))
         schema.str <- strsplit(table_schema, "_")[[1]]
         if (schema.str[1] != "pg" || schema.str[2] != "temp")
-            return (FALSE)
+            return (list(FALSE, table))
+        table <- c(table_schema, table)
     }
-    return (TRUE)
+    return (list(TRUE, table))
 }
 
 ## ------------------------------------------------------------------------

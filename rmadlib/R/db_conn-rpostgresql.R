@@ -98,8 +98,8 @@
 
 ## ------------------------------------------------------------------------
 
-.db.buildTableDefinition <- function(dbObj, name, obj, field.types = NULL,
-                                     row.names = TRUE, dist.str, is.temp, ...)
+.db.buildTableDefinition <- function(dbObj, name, obj, field.types,
+                                     row.names, dist.str, is.temp, ...)
 {
     if(!is.data.frame(obj))
         obj <- as.data.frame(obj)
@@ -113,8 +113,8 @@
         field.types <- sapply(obj, RPostgreSQL::dbDataType, dbObj = dbObj)
     }
     i <- match("row.names", names(field.types), nomatch=0)
-    if(i>0) ## did we add a row.names value?  If so, it's a text field.
-        field.types[i] <- RPostgreSQL::dbDataType(dbObj, field.types$row.names)
+    ## if (i > 0) ## did we add a row.names value?  If so, it's a text field.
+        ## field.types[i] <- RPostgreSQL::dbDataType(dbObj, field.types[["row.names"]])
 
     ## need to create a new (empty) table
     flds <- paste(RPostgreSQL::postgresqlQuoteId(names(field.types)), field.types)
@@ -158,8 +158,12 @@
         {
             new.con <- conn
             
+            if (is.temp) {
+                check.temp <- .db.existsTempTable(name, conn.id)
+                name <- check.temp[[2]]
+            }
             if((!is.temp && RPostgreSQL::dbExistsTable(conn,name)) ||
-               (is.temp && .db.existsTempTable(name, conn.id)))
+               (is.temp && check.temp[[1]]))
             {
                 if(overwrite)
                 {
@@ -204,7 +208,7 @@
             {
                 ## need to init table, say, with the first nrows lines
                 d <- read.table(fn, sep=sep, header=header, skip=skip, nrows=nrows, ...)
-                sql <- .db.buildTableDefinition(new.con, name, d, field.types, row.names, dist.str, is.temp)
+                sql <- .db.buildTableDefinition(new.con, table, d, field.types, row.names, dist.str, is.temp)
                 rs <- try(RPostgreSQL::dbSendQuery(new.con, sql))
                 if(inherits(rs, RPostgreSQL:::ErrorClass)){
                     warning("could not create table: aborting postgresqlImportFile")
@@ -218,10 +222,11 @@
                 warning(sprintf("table %s already exists -- use append=TRUE?", name))
             }
         }
-        else # create table from a data frame 
+        else # create table from a data frame --------------------------------
         {
+            if (is.temp) check.temp <- .db.existsTempTable(table, conn.id)
             if((!is.temp && RPostgreSQL::dbExistsTable(conn, name)) ||
-               (is.temp && .db.existsTempTable(name, conn.id)))
+               (is.temp && check.temp[[1]]))
             {
                 if (overwrite) {
                     if (!RPostgreSQL::dbRemoveTable(conn, name))
@@ -239,8 +244,9 @@
             else
             {
                 if (missing(field.types)) field.types <- NULL
-                sql <- .db.buildTableDefinition(conn, name, r.obj, field.types, row.names, dist.str, is.temp)
+                sql <- .db.buildTableDefinition(conn, table, r.obj, field.types, row.names, dist.str, is.temp)
                 rs <- try(RPostgreSQL::dbSendQuery(conn, sql))
+                if (is.temp) name <- (.db.existsTempTable(table, conn.id))[[2]]
                 if(inherits(rs, RPostgreSQL:::ErrorClass))
                 {
                     warning("could not create table: aborting assignTable")
@@ -256,7 +262,7 @@
 
     ## After the table has been created, one can append data to it
     RPostgreSQL::dbWriteTable(conn = .localVars$db[[idx]]$conn,
-                              name = table, value = value, row.names = row.names,
+                              name = name, value = value, row.names = row.names,
                               overwrite = overwrite, append = TRUE,
                               header = header, nrows = nrows, sep = sep,
                               eol=eol, skip = skip, quote = quote,

@@ -31,11 +31,6 @@ db.data.frame <- function (x, conn.id = 1, id.col = character(0))
                    .content = x,
                    .conn.id = conn.id,
                    .id.col = id.col)
-        
-        ## compute dim
-        col.num <- length(res@.col.name)
-        row.num <- .db.getQuery(paste("select count(*) from", x), conn.id)
-        res@.dim <- c(row.num$count, col.num)
     }
 
     col.info <- .db.getQuery(paste("select column_name, data_type, udt_name from information_schema.columns where ",
@@ -44,6 +39,13 @@ db.data.frame <- function (x, conn.id = 1, id.col = character(0))
     res@.col.name <- col.info$column_name
     res@.col.data_type <- col.info$data_type
     res@.col.udt_name <- col.info$udt_name
+
+    if (inherits(res, "db.table")) {
+        ## compute dim
+        col.num <- length(res@.col.name)
+        row.num <- .db.getQuery(paste("select count(*) from", x), conn.id)
+        res@.dim <- c(row.num$count, col.num)
+    }
 
     ## table type (local temp)
     tbl.type <- .db.getQuery(paste("select table_type from information_schema.tables where ",
