@@ -27,7 +27,7 @@
         user = user,
         dbname = dbname, # database name
         # which R package is used to connected to database
-        conn.pkg = "rpostgresql"
+        conn.pkg = "rpostgresql",
         madlib = madlib # madlib schema name
         )
 
@@ -110,17 +110,17 @@
     if(is.null(field.types)){
         ## the following mapping should be coming from some kind of table
         ## also, need to use converter functions (for dates, etc.)
-        field.types <- sapply(obj, dbDataType, dbObj = dbObj)
+        field.types <- sapply(obj, RPostgreSQL::dbDataType, dbObj = dbObj)
     }
     i <- match("row.names", names(field.types), nomatch=0)
     if(i>0) ## did we add a row.names value?  If so, it's a text field.
-        field.types[i] <- dbDataType(dbObj, field.types$row.names)
+        field.types[i] <- RPostgreSQL::dbDataType(dbObj, field.types$row.names)
 
     ## need to create a new (empty) table
-    flds <- paste(postgresqlQuoteId(names(field.types)), field.types)
+    flds <- paste(RPostgreSQL::postgresqlQuoteId(names(field.types)), field.types)
     if (is.temp) tmp.str <- "temp"
     else tmp.str <- ""
-    paste("CREATE", tmp.str, "TABLE", postgresqlTableRef(name), "\n(",
+    paste("CREATE", tmp.str, "TABLE", RPostgreSQL::postgresqlTableRef(name), "\n(",
           paste(flds, collapse=",\n\t"), "\n)", dist.str)
 }
 

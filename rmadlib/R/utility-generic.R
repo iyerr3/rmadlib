@@ -79,7 +79,7 @@
 ## simply return the most direct answer
 .db.analyze.table.name <- function (name)
 {
-    parts <- strsplit(db.obj_name, "\\.")[[1]]
+    parts <- strsplit(name, "\\.")[[1]]
     l <- length(parts)
     if (l != 1 || l != 2)
         stop("The database object name is not valid!")

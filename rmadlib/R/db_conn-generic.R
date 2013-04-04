@@ -45,7 +45,7 @@ db.connect <- function (host, user, dbname, password = "", port = "",
         command <- paste(".db.connect.", conn.pkg.name, "(host=\"", host,
                          "\", user=\"", user, "\", dbname=\"", dbname,
                          "\", password=\"", password, "\", port=", port,
-                         ", madlib=\"", madlib, "\""
+                         ", madlib=\"", madlib, "\"",
                          ")", sep = "")
         result <- eval(parse(text = command))
         cat(paste("Created a connection to database with ID", result, "\n"))
