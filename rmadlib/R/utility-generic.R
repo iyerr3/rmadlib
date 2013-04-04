@@ -30,7 +30,9 @@
 
 .is.conn.id.valid <- function (conn.id)
 {
-    return (!is.na(conn.id) &&
+    return (length(conn.id) != 0 &&
+            !is.null(conn.id) &&
+            !is.na(conn.id) && 
             conn.id >= 1 &&
             length(.localVars$conn.id) != 0 &&
             conn.id %in% .localVars$conn.id[,1])

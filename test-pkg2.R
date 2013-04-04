@@ -20,6 +20,10 @@ dim(x)
 
 names(x)
 
+conn.id(x)
+
+conn.id(x) <- 2
+
 rmadlib:::.db.listTables()
 
 rmadlib:::.is.table.or.view(c("public", "cvtest1"))
