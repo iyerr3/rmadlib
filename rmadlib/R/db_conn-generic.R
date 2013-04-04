@@ -189,6 +189,35 @@ db.list <- function ()
     eval(parse(text = command))
 }
 
+.db.existsTempTable <- function (table, conn.id = 1)
+{
+    if (length(table) == 2)
+    {
+        schema.str <- strsplit(table[1], "_")[[1]]
+        if (schema.str[1] != "pg" || schema.str[2] != "temp")
+            return (FALSE)
+    }
+    else
+    {
+        schemas <- .db.str2vec(.db.getQuery("select current_schemas(True)", conn.id),
+                               type = "character")
+        table_schema <- NULL
+        for (schema in schemas)
+        {
+            if (.db.existsTable(c(schema, table), conn.id)) {
+                table_schema <- schema
+                break
+            }
+        }
+
+        if (is.null(table_schema)) return (FALSE)
+        schema.str <- strsplit(table_schema, "_")[[1]]
+        if (schema.str[1] != "pg" || schema.str[2] != "temp")
+            return (FALSE)
+    }
+    return (TRUE)
+}
+
 ## ------------------------------------------------------------------------
 
 .db.listFields <- function (table, conn.id = 1)
@@ -204,6 +233,7 @@ db.list <- function ()
 .db.writeTable <- function (table, r.obj, row.names = TRUE, 
                             overwrite = FALSE, append = FALSE,
                             distributed.by = NULL, # only for GPDB
+                            is.temp = FALSE,
                             conn.id = 1, header, nrows = 50, sep = ",",
                             eol="\n", skip = 0, quote = '"', ...)
 {
@@ -211,7 +241,8 @@ db.list <- function ()
     command <- paste(".db.writeTable.", .localVars$db[[id]]$conn.pkg,
                      "(table=table, r.obj=r.obj, row.names=row.names,
                       overwrite=overwrite, append=append,
-                      distributed.by=distributed.by, idx=id,
+                      distributed.by=distributed.by,
+                      is.temp=is.temp, idx=id,
                       header=header, nrows=nrows, sep=sep, eol=eol,
                       skip=skip, quote=quote, ...)",
                      sep = "")

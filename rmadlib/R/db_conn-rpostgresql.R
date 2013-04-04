@@ -98,13 +98,44 @@
 
 ## ------------------------------------------------------------------------
 
+.db.buildTableDefinition <- function(dbObj, name, obj, field.types = NULL,
+                                     row.names = TRUE, dist.str, is.temp, ...)
+{
+    if(!is.data.frame(obj))
+        obj <- as.data.frame(obj)
+    if(!is.null(row.names) && row.names){
+        obj  <- cbind(row.names(obj), obj)  ## can't use row.names= here
+        names(obj)[1] <- "row.names"
+    }
+    if(is.null(field.types)){
+        ## the following mapping should be coming from some kind of table
+        ## also, need to use converter functions (for dates, etc.)
+        field.types <- sapply(obj, dbDataType, dbObj = dbObj)
+    }
+    i <- match("row.names", names(field.types), nomatch=0)
+    if(i>0) ## did we add a row.names value?  If so, it's a text field.
+        field.types[i] <- dbDataType(dbObj, field.types$row.names)
+
+    ## need to create a new (empty) table
+    flds <- paste(postgresqlQuoteId(names(field.types)), field.types)
+    if (is.temp) tmp.str <- "temp"
+    else tmp.str <- ""
+    paste("CREATE", tmp.str, "TABLE", postgresqlTableRef(name), "\n(",
+          paste(flds, collapse=",\n\t"), "\n)", dist.str)
+}
+
+
+## ------------------------------------------------------------------------
+
 .db.writeTable.rpostgresql <- function (table, r.obj, row.names, 
                                         overwrite, append, distributed.by,
+                                        is.temp,
                                         idx, header, nrows = 50, sep = ",",
                                         eol="\n", skip = 0, quote = '"',
                                         field.types, ...)
 {
     conn <- .localVars$db[[idx]]$conn
+    conn.id <- .localVars$db[[idx]]$conn.id
     name <- table
     value <- r.obj
     ## only for GPDB
@@ -127,7 +158,8 @@
         {
             new.con <- conn
             
-            if(RPostgreSQL::dbExistsTable(conn,name))
+            if((!is.temp && RPostgreSQL::dbExistsTable(conn,name)) ||
+               (is.temp && .db.existsTempTable(name, conn.id)))
             {
                 if(overwrite)
                 {
@@ -149,8 +181,7 @@
             if(missing(header) || missing(row.names))
             {
                 f <- file(fn, open="r")
-                if(skip>0)
-                    readLines(f, n=skip)
+                if (skip>0) readLines(f, n=skip)
                 txtcon <- textConnection(readLines(f, n=2))
                 flds <- count.fields(txtcon, sep)
                 close(txtcon)
@@ -173,11 +204,7 @@
             {
                 ## need to init table, say, with the first nrows lines
                 d <- read.table(fn, sep=sep, header=header, skip=skip, nrows=nrows, ...)
-                sql <-
-                    RPostgreSQL::postgresqlBuildTableDefinition(new.con, name, obj=d,
-                                                                field.types = field.types,
-                                                                row.names = row.names)
-                sql <- paste(sql, dist.str)
+                sql <- .db.buildTableDefinition(new.con, name, d, field.types, row.names, dist.str, is.temp)
                 rs <- try(RPostgreSQL::dbSendQuery(new.con, sql))
                 if(inherits(rs, RPostgreSQL:::ErrorClass)){
                     warning("could not create table: aborting postgresqlImportFile")
@@ -193,38 +220,17 @@
         }
         else # create table from a data frame 
         {
-            if(!is.data.frame(r.obj))
-                r.obj <- as.data.frame(r.obj)
-
-            if(row.names)
+            if((!is.temp && RPostgreSQL::dbExistsTable(conn, name)) ||
+               (is.temp && .db.existsTempTable(name, conn.id)))
             {
-                r.obj <- cbind(row.names(r.obj), r.obj)  ## can't use row.names= here
-                names(r.obj)[1] <- "row.names"
-            }
-
-            if(missing(field.types) || is.null(field.types)) {
-                ## the following mapping should be coming from some kind of table
-                ## also, need to use converter functions (for dates, etc.)
-                field.types <- sapply(r.obj, RPostgreSQL::dbDataType, dbObj = conn)
-            }
-
-            i <- match("row.names", names(field.types), nomatch=0)
-            if (i>0) ## did we add a row.names r.obj?  If so, it's a text field.
-                ## MODIFIED -- Sameer
-                field.types[i] <- RPostgreSQL::dbDataType(dbObj=conn, field.types[row.names])
-            
-            new.con <- conn
-            
-            if(RPostgreSQL::dbExistsTable(conn, name))
-            {
-                if(overwrite){
-                    if(!RPostgreSQL::dbRemoveTable(conn, name))
+                if (overwrite) {
+                    if (!RPostgreSQL::dbRemoveTable(conn, name))
                     {
                         warning(paste("table", name, "couldn't be overwritten"))
                         return(FALSE)
                     }
                 }
-                else if(!append)
+                else if (!append)
                 {
                     warning(paste("table", name, "exists in database: aborting assignTable"))
                     return(FALSE)
@@ -232,15 +238,9 @@
             }
             else
             {
-                ## need to re-test table for existance
-                ## need to create a new (empty) table
-                sql1 <- paste("create table ", RPostgreSQL::postgresqlTableRef(name), "\n(\n\t", sep="")
-                sql2 <- paste(paste(RPostgreSQL::postgresqlQuoteId(names(field.types)), field.types), collapse=",\n\t",
-                              sep="")
-                sql3 <- "\n)\n"
-                ## sql <- paste(sql1, sql2, sql3, dist.str, sep="")
-                sql <- paste(sql1, sql2, sql3, sep="")
-                rs <- try(RPostgreSQL::dbSendQuery(new.con, sql))
+                if (missing(field.types)) field.types <- NULL
+                sql <- .db.buildTableDefinition(conn, name, r.obj, field.types, row.names, dist.str, is.temp)
+                rs <- try(RPostgreSQL::dbSendQuery(conn, sql))
                 if(inherits(rs, RPostgreSQL:::ErrorClass))
                 {
                     warning("could not create table: aborting assignTable")

@@ -10,7 +10,8 @@ db.data.frame <- function (x, conn.id = 1, id.col = character(0))
     if (! .is.conn.id.valid(conn.id))
         stop("There is no such a connection to any database!")
 
-    table <- .db.obj.info(x) # a vector (schema_name, table_name)
+    ## a vector (schema_name, table_name) or just table_name
+    table <- .db.analyze.table.name(x) 
     if (!.is.table.or.view(table, conn.id))
         stop("No such table or view!")
 
@@ -37,14 +38,16 @@ db.data.frame <- function (x, conn.id = 1, id.col = character(0))
         res@.dim <- c(row.num$count, col.num)
     }
 
-    col.info <- .db.getQuery(paste("select column_name, data_type, udt_name from information_schema.columns where table_name = '", table[2], "' and table_schema = '", table[1], "'", sep = ""), conn.id)
+    col.info <- .db.getQuery(paste("select column_name, data_type, udt_name from information_schema.columns where ",
+                                   .db.table.schema.str(table), sep = ""), conn.id)
 
     res@.col.name <- col.info$column_name
     res@.col.data_type <- col.info$data_type
     res@.col.udt_name <- col.info$udt_name
 
     ## table type (local temp)
-    tbl.type <- .db.getQuery(paste("select table_type from information_schema.tables where table_name = '", table[2], "' and table_schema = '", table[1], "'", sep = ""), conn.id)
+    tbl.type <- .db.getQuery(paste("select table_type from information_schema.tables where ",
+                                   .db.table.schema.str(table), sep = ""), conn.id)
     res@.table.type <- tbl.type$table_type
 
     return (res)

@@ -23,7 +23,9 @@
 
 .is.arg.string <- function (arg)
 {
-    is.character(arg)
+    return (!is.null(arg) &&
+            !is.na(arg) &&
+            is.character(arg))
 }
 
 ## ------------------------------------------------------------------------
@@ -40,6 +42,8 @@
 
 ## ------------------------------------------------------------------------
 
+## It is a little bit more complicated when schema name is not given.
+## The table might be a temporary table, or a normal table. 
 .db.obj.info <- function (db.obj_name, conn.id = 1)
 {
     parts <- strsplit(db.obj_name, "\\.")[[1]]
@@ -48,6 +52,7 @@
         table_name <- parts[2]
     } else if (length(parts) == 1) {
         table_name <- parts[1]
+   
         schemas <- .db.str2vec(.db.getQuery("select current_schemas(True)", conn.id),
                                type = "character")
         table_schema <- NULL
@@ -58,10 +63,11 @@
                 break
             }
         }
-
-        if (is.null(table_schema))
-            stop("This object does not exist in the database!")
         
+        ## No such table, going to create a new one
+        ## usually in public
+        if (is.null(table_schema))
+            table_schema <- .db.getQuery("select current_schema()", conn.id)        
     } else {
         stop("The database object name is not valid!")
     }
@@ -70,12 +76,33 @@
 
 ## ------------------------------------------------------------------------
 
+## simply return the most direct answer
+.db.analyze.table.name <- function (name)
+{
+    parts <- strsplit(db.obj_name, "\\.")[[1]]
+    l <- length(parts)
+    if (l != 1 || l != 2)
+        stop("The database object name is not valid!")
+    return (parts)
+}
+
+.db.table.schema.str <- function (table)
+{
+    l <- length(table)
+    if (l == 2)
+        return (paste("table_name = '", table[2], "' and table_schema = '",
+                      table[1], "'", sep = ""))
+    else if (l == 1)
+        return (paste("table_name = '", table, "'", sep = ""))
+}
+
+## ------------------------------------------------------------------------
+
 ## Is the object in database a table?
 .is.table.or.view <- function (table, conn.id = 1)
 {
-    pick <- .db.getQuery(paste("select count(*) from information_schema.tables where table_name = '",
-                               table[2],
-                               "' and table_schema ='", table[1], "'", sep = ""), conn.id)
+    pick <- .db.getQuery(paste("select count(*) from information_schema.tables where ",
+                               .db.table.schema.str(table), sep = ""), conn.id)
     if (pick == 1)
         return (TRUE)
     else
@@ -87,9 +114,8 @@
 ## Is the object in database a view?
 .is.view <- function (table, conn.id = 1)
 {
-    pick <- .db.getQuery(paste("select count(*) from information_schema.views where table_name = '",
-                               table[2],
-                               "' and table_schema = '", table[1], "'", sep = ""), conn.id)
+    pick <- .db.getQuery(paste("select count(*) from information_schema.views where ",
+                               .db.table.schema.str(table), sep = ""), conn.id)
     if (pick == 1)
         return (TRUE)
     else
