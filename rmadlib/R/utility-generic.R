@@ -48,7 +48,20 @@
         table_name <- parts[2]
     } else if (length(parts) == 1) {
         table_name <- parts[1]
-        table_schema <- .db.getQuery("select current_schema()", conn.id)
+        schemas <- .db.str2vec(.db.getQuery("select current_schemas(True)", conn.id),
+                               type = "character")
+        table_schema <- NULL
+        for (schema in schemas)
+        {
+            if (.db.existsTable(c(schema, table_name), conn.id)) {
+                table_schema <- schema
+                break
+            }
+        }
+
+        if (is.null(table_schema))
+            stop("This object does not exist in the database!")
+        
     } else {
         stop("The database object name is not valid!")
     }
