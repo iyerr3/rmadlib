@@ -38,7 +38,7 @@ db.connect <- function (host, user, dbname, password = "", port = "",
         {
             print(paste("Package ", pkg.to.load, " is going to be installed so that ",
                         .this.pkg.name, " could connect to databases.\n\n", sep = ""))
-            install.packages(pkgs = pkg.to.load, type = "source")
+            install.packages(pkgs = pkg.to.load)
         }
 
         eval(parse(text = paste("library(", pkg.to.load, ")", sep = "")))
