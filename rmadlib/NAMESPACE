@@ -13,3 +13,5 @@ exportMethods ("dim", "names")
 export ("content", "conn.id", "conn.id<-")
 
 exportMethods ("print", "show")
+
+export ("is.db.data.frame")
