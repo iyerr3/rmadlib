@@ -231,16 +231,16 @@ db.list <- function ()
 
 ## ------------------------------------------------------------------------
 
-.db.writeTable <- function (table, r.obj, row.names = TRUE, 
+.db.writeTable <- function (table, r.obj, add.row.names = TRUE, 
                             overwrite = FALSE, append = FALSE,
                             distributed.by = NULL, # only for GPDB
                             is.temp = FALSE,
-                            conn.id = 1, header, nrows = 50, sep = ",",
+                            conn.id = 1, header = FALSE, nrows = 50, sep = ",",
                             eol="\n", skip = 0, quote = '"', ...)
 {
     id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
     command <- paste(".db.writeTable.", .localVars$db[[id]]$conn.pkg,
-                     "(table=table, r.obj=r.obj, row.names=row.names,
+                     "(table=table, r.obj=r.obj, add.row.names=add.row.names,
                       overwrite=overwrite, append=append,
                       distributed.by=distributed.by,
                       is.temp=is.temp, idx=id,

@@ -24,7 +24,6 @@
 .is.arg.string <- function (arg)
 {
     return (!is.null(arg) &&
-            !is.na(arg) &&
             is.character(arg))
 }
 

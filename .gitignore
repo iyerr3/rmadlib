@@ -3,3 +3,4 @@ random.walk.on.network/*
 rmadlib.Rcheck/*
 rmadlib*.tar.gz
 *.swp
+*.csv
