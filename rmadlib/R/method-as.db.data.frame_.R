@@ -74,6 +74,19 @@ setMethod ("as.db.data.frame",
         .db.getQuery(paste("alter table ", table.str,
                            " add primary key (\"",
                            id.col, "\")", sep = ""))
+
+    if (is.data.frame(x)) {
+        cat("The data in the data.frame", deparse(substitute(x)),
+            "is stored into the table", table.name, "in database",
+            dbname(conn.id), "on", host(conn.id), "!\n")
+    } else {
+        cat("The data in the file", x,
+            "is stored into the table", table.name, "in database",
+            dbname(conn.id), "on", host(conn.id), "!\n")
+    }
+    cat("An R object pointing to", table.name,
+        "in database", dbname(conn.id), "on", host(conn.id),
+        "is created !\n")
     
     db.data.frame(table.name, conn.id, id.col)
 }

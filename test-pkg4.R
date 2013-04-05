@@ -12,6 +12,9 @@ res <- rmadlib:::.db.readTable("testx1")
 
 res
 
+t <- try(rmadlib:::.db.writeTable(table = "testx1", r.obj = x, distributed.by = NULL, row.names = TRUE, is.temp = TRUE))
+
+
 y <- db.data.frame("testx1")
 
 dim(y)
@@ -33,3 +36,52 @@ w@.col.data_type
 w@.table.type
 
 
+## ------------------------------------------------------------------------
+
+analyze.formula <- function (formula, data)
+{
+    f.str <- strsplit(deparse(formula), "\\|")[[1]]
+    f1 <- formula(f.str[1]) # formula
+    f2 <- f.str[2] # grouping columns, might be NA
+    if (!is.na(f2)) {
+        f2.terms <- terms(formula(paste("~", f2)))
+        f2.labels <- attr(f2.terms, "term.labels")
+        inter <- intersect(f2.labels, names(data))
+        if (length(inter) != length(f2.labels))
+            stop("The grouping part of the formula is not quite right!")
+        grp <- paste(f2.labels, collapse = " ")
+    } else {
+        f2.labels <- NULL
+        grp <- NULL
+    }
+    ## create a fake data.frame only to extract
+    ## terms when there is "." in formula
+    fake.data <- data.frame(t(names(data)))
+    colnames(fake.data) <- names(data)
+    f.terms <- terms(f1, data = fake.data) # formula terms
+    f.factors <- attr(f.terms, "factors") # the 1st row is the dependent variable
+    f.labels <- attr(f.terms, "term.labels") # each terms on the right side
+    f.intercept <- attr(f.terms, "intercept")
+    labels <- gsub(":", "*", f.labels) # replace interaction : with *
+    labels <- gsub("I\\((.*)\\)", "\\1", labels) # remove I()
+    if (!is.null(f2.labels)) # remove grouping columns
+        labels <- setdiff(labels, f2.labels)
+    ##
+    dep.var <- rownames(f.factors)[1] # dependent variable
+    ## with or without intercept
+    if (f.intercept == 0)
+        intercept.str <- ""
+    else
+        intercept.str <- "1,"
+    ind.var <- paste("array[", intercept.str,
+                     paste(labels, collapse = ","),
+                     "]", sep = "") # independent variable
+    ##
+    list(dep.str = dep.var, ind.str = ind.var, grp.str = grp)
+}
+
+dat <- data.frame(x1 = 1:3, x2 = 1:3, x3 = 1:3, x4 = 1:3, y = 1:3)
+
+analyze.formula(formula = log(y) ~ x1 * (x1 + x2) + I(x2^2) + exp(1+x1) | x3 + x4, data = dat)
+
+rmadlib:::.db.str2vec("x3 x4", type = "character")

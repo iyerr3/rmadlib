@@ -18,6 +18,10 @@
 
 ## ------------------------------------------------------------------------
 
+.err.class <- "try-error"
+
+## ------------------------------------------------------------------------
+
 ## All local variables defined at the package loading time
 ## cannot be changed without exposing to users. If we really
 ## export these variables, they will easily interfere with other
