@@ -176,3 +176,25 @@
     ##
     list(dep.str = dep.var, ind.str = ind.var, grp.str = grp)
 }
+
+## ------------------------------------------------------------------------
+
+## interactively read an input from the user
+.read.input <- function (msg, expected.answer = c("yes", "y", "no", "n"))
+{
+    a <- tolower(readline(msg))
+    while (! a %in% expected.answer)
+        a <- tolower(readline(msg))
+    a
+}
+
+## ------------------------------------------------------------------------
+
+## set/reset the message level
+## returns the old message level
+.set.msg.level <- function (level)
+{
+    old.level <- .db.getQuery("select setting from pg_settings where name='client_min_messages'")
+    .db.getQuery(paste("set client_min_messages to", level))
+    old.level
+}
