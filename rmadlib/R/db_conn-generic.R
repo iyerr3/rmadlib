@@ -18,7 +18,8 @@ db.connect <- function (host, user, dbname, password = "", port = "",
     ## available packages, to check whether RODBC and RPostgreSQL are
     ## already installed
     if (is.null(.localVars$installed.pkgs))
-        .localVars$installed.pkgs <- tolower(attr(installed.packages(), "dimnames")[[1]])
+        .localVars$installed.pkgs <- tolower(attr(installed.packages(),
+                                                  "dimnames")[[1]])
     
     ## argument type check
     if (!.is.arg.string(host) ||
@@ -34,10 +35,13 @@ db.connect <- function (host, user, dbname, password = "", port = "",
     {
         i <- which(tolower(.supported.connections) == conn.pkg.name)
         pkg.to.load <- .supported.connections[i]
-        if (!(conn.pkg.name %in% .localVars$installed.pkgs)) # if the package is not installed, install it
+        ## if the package is not installed, install it
+        if (!(conn.pkg.name %in% .localVars$installed.pkgs)) 
         {
-            print(paste("Package ", pkg.to.load, " is going to be installed so that ",
-                        .this.pkg.name, " could connect to databases.\n\n", sep = ""))
+            print(paste("Package ", pkg.to.load,
+                        " is going to be installed so that ",
+                        .this.pkg.name,
+                        " could connect to databases.\n\n", sep = ""))
             install.packages(pkgs = pkg.to.load)
         }
 
@@ -53,7 +57,8 @@ db.connect <- function (host, user, dbname, password = "", port = "",
     }
     else
     {
-        stop(paste("Right now, only ", .supported.connections, " is supported to connected to database.\n", sep = ""))
+        stop(paste("Right now, only ", .supported.connections,
+                   " is supported to connected to database.\n", sep = ""))
     }
 }
 
@@ -68,7 +73,8 @@ db.disconnect <- function (conn.id = 1, verbose = TRUE)
 
     idx <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
     conn.pkg <- .localVars$db[[idx]]$conn.pkg
-    command <- paste(".db.disconnect.", conn.pkg, "(idx=", idx, ")", sep = "")
+    command <- paste(".db.disconnect.", conn.pkg, "(idx=", idx, ")",
+                     sep = "")
     res <- eval(parse(text = command))
     if (res)
     {
@@ -113,13 +119,17 @@ db.list <- function ()
             idx <- .localVars$conn.id[i,]
             cat("\n## -------------------------------\n")
             cat(paste("[Connection ID ", idx[1], "]\n", sep = ""))
-            cat(paste("Host :     ", .localVars$db[[idx[2]]]$host, "\n", sep = ""))
-            cat(paste("User :     ", .localVars$db[[idx[2]]]$user, "\n", sep = ""))
-            cat(paste("Database : ", .localVars$db[[idx[2]]]$dbname, "\n", sep = ""))
+            cat(paste("Host :     ", .localVars$db[[idx[2]]]$host,
+                      "\n", sep = ""))
+            cat(paste("User :     ", .localVars$db[[idx[2]]]$user,
+                      "\n", sep = ""))
+            cat(paste("Database : ", .localVars$db[[idx[2]]]$dbname,
+                      "\n", sep = ""))
             
             pkg <- .localVars$db[[idx[2]]]$conn.pkg
             id <- which(tolower(.supported.connections) == pkg)
-            cat(paste("Conn pkg : ", .supported.connections[id], "\n", sep = ""))
+            cat(paste("Conn pkg : ", .supported.connections[id],
+                      "\n", sep = ""))
         }
         cat("\n")
     }
@@ -135,7 +145,8 @@ db.list <- function ()
 .db.fetch <- function (res, n = 500)
 {
     idx <- .localVars$conn.id[.localVars$conn.id[,1] == res$conn.id, 2]
-    command <- paste(".db.fetch.", .localVars$db[[idx]]$conn.pkg, "(res = res$res, n = n)", sep = "")
+    command <- paste(".db.fetch.", .localVars$db[[idx]]$conn.pkg,
+                     "(res = res$res, n = n)", sep = "")
     eval(parse(text = command))
 }
 
@@ -199,8 +210,9 @@ db.list <- function ()
     }
     else
     {
-        schemas <- .db.str2vec(.db.getQuery("select current_schemas(True)", conn.id),
-                               type = "character")
+        schemas <- .db.str2vec(
+            .db.getQuery("select current_schemas(True)", conn.id),
+            type = "character")
         table_schema <- NULL
         for (schema in schemas)
         {
@@ -235,7 +247,8 @@ db.list <- function ()
                             overwrite = FALSE, append = FALSE,
                             distributed.by = NULL, # only for GPDB
                             is.temp = FALSE,
-                            conn.id = 1, header = FALSE, nrows = 50, sep = ",",
+                            conn.id = 1, header = FALSE, nrows = 50,
+                            sep = ",",
                             eol="\n", skip = 0, quote = '"', ...)
 {
     id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]

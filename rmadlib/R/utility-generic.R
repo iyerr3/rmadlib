@@ -8,7 +8,9 @@
 ## convert {...} string into an array
 .db.str2vec <- function (str, type = "double")
 {
-    elm <- regmatches(str, gregexpr("[^,\"\\s\\{\\}]+|\"(\\\"|[^\"])*\"", str, perl=T))[[1]]
+    elm <- regmatches(str,
+                      gregexpr("[^,\"\\s\\{\\}]+|\"(\\\"|[^\"])*\"",
+                               str, perl=T))[[1]]
     if (type == "character")
         return (elm)
     else if (type == "integer")
@@ -100,8 +102,9 @@
 ## Is the object in database a table?
 .is.table.or.view <- function (table, conn.id = 1)
 {
-    pick <- .db.getQuery(paste("select count(*) from information_schema.tables where ",
-                               .db.table.schema.str(table), sep = ""), conn.id)
+    pick <- .db.getQuery(
+        paste("select count(*) from information_schema.tables where ",
+              .db.table.schema.str(table), sep = ""), conn.id)
     if (pick == 1)
         return (TRUE)
     else
@@ -113,8 +116,9 @@
 ## Is the object in database a view?
 .is.view <- function (table, conn.id = 1)
 {
-    pick <- .db.getQuery(paste("select count(*) from information_schema.views where ",
-                               .db.table.schema.str(table), sep = ""), conn.id)
+    pick <- .db.getQuery(
+        paste("select count(*) from information_schema.views where ",
+              .db.table.schema.str(table), sep = ""), conn.id)
     if (pick == 1)
         return (TRUE)
     else
@@ -156,7 +160,8 @@
     fake.data <- data.frame(t(names(data)))
     colnames(fake.data) <- names(data)
     f.terms <- terms(f1, data = fake.data) # formula terms
-    f.factors <- attr(f.terms, "factors") # the 1st row is the dependent variable
+    ## the 1st row is the dependent variable
+    f.factors <- attr(f.terms, "factors")
     f.labels <- attr(f.terms, "term.labels") # each terms on the right side
     f.intercept <- attr(f.terms, "intercept")
     labels <- gsub(":", "*", f.labels) # replace interaction : with *

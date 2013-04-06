@@ -4,7 +4,8 @@
 ### Database related utilities, using RPostgreSQL to connect
 
 ## ------------------------------------------------------------------------
-.db.connect.rpostgresql <- function(host, user, dbname, password, port, madlib)
+.db.connect.rpostgresql <- function(host, user, dbname, password,
+                                    port, madlib)
 {
     if (is.null(.localVars$drv$rpostgresql))
         .localVars$drv$rpostgresql <- DBI::dbDriver("PostgreSQL")
@@ -112,15 +113,14 @@
         ## also, need to use converter functions (for dates, etc.)
         field.types <- sapply(obj, RPostgreSQL::dbDataType, dbObj = dbObj)
     }
-    i <- match("row.names", names(field.types), nomatch=0)
-    ## if (i > 0) ## did we add a row.names value?  If so, it's a text field.
-        ## field.types[i] <- RPostgreSQL::dbDataType(dbObj, field.types[["row.names"]])
 
     ## need to create a new (empty) table
-    flds <- paste(RPostgreSQL::postgresqlQuoteId(names(field.types)), field.types)
+    flds <- paste(RPostgreSQL::postgresqlQuoteId(names(field.types)),
+                  field.types)
     if (is.temp) tmp.str <- "temp"
     else tmp.str <- ""
-    paste("CREATE", tmp.str, "TABLE", RPostgreSQL::postgresqlTableRef(name), "\n(",
+    paste("CREATE", tmp.str, "TABLE",
+          RPostgreSQL::postgresqlTableRef(name), "\n(",
           paste(flds, collapse=",\n\t"), "\n)", dist.str)
 }
 
@@ -148,7 +148,8 @@
         if (distributed.by == "") # "" means distributed randomly
             dist.str <- "DISTRIBUTED RANDOMLY"
         else
-            dist.str <- paste("DISTRIBUTED BY (", distributed.by, ")", sep = "")
+            dist.str <- paste("DISTRIBUTED BY (", distributed.by, ")",
+                              sep = "")
     }
     
     if (!append)
@@ -169,13 +170,16 @@
                 {
                     if(!RPostgreSQL::dbRemoveTable(conn, name))
                     {
-                        warning(paste("table", name, "couldn't be overwritten"))
+                        warning(paste("table", name,
+                                      "couldn't be overwritten"))
                         return(FALSE)
                     }
                 }
                 else if(!append)
                 {
-                    warning(paste("table", name, "exists in database: aborting dbWriteTable"))
+                    warning(
+                        paste("table", name,
+                              "exists in database: aborting dbWriteTable"))
                     return(FALSE)
                 }
             }
@@ -210,7 +214,9 @@
                 d <- read.table(fn, sep=sep, header=header, skip=skip,
                                 nrows=nrows, ...)
                 if (missing(field.types)) field.types <- NULL
-                sql <- .db.buildTableDefinition(new.con, table, d, field.types, add.row.names, dist.str, is.temp)
+                sql <- .db.buildTableDefinition(new.con, table, d,
+                                                field.types, add.row.names,
+                                                dist.str, is.temp)
                 rs <- try(RPostgreSQL::dbSendQuery(new.con, sql))
                 if(inherits(rs, RPostgreSQL:::ErrorClass)){
                     warning("could not create table: aborting postgresqlImportFile")
@@ -221,14 +227,16 @@
             }
             else if(!append)
             {
-                warning(sprintf("table %s already exists -- use append=TRUE?", name))
+                warning(sprintf(
+                    "table %s already exists -- use append=TRUE?", name))
             }
 
             ## After the table has been created, one can append data to it
             RPostgreSQL::dbWriteTable(conn = .localVars$db[[idx]]$conn,
                                       name = name, value = value,
                                       overwrite = overwrite, append = TRUE,
-                                      header = header, nrows = nrows, sep = sep,
+                                      header = header, nrows = nrows,
+                                      sep = sep,
                                       eol=eol, skip = skip, quote = quote,
                                       field.types = field.types, ...)
         }
@@ -241,22 +249,28 @@
                 if (overwrite) {
                     if (!RPostgreSQL::dbRemoveTable(conn, name))
                     {
-                        warning(paste("table", name, "couldn't be overwritten"))
+                        warning(paste("table", name,
+                                      "couldn't be overwritten"))
                         return(FALSE)
                     }
                 }
                 else if (!append)
                 {
-                    warning(paste("table", name, "exists in database: aborting assignTable"))
+                    warning(
+                        paste("table", name,
+                              "exists in database: aborting assignTable"))
                     return(FALSE)
                 }         
             }
             else
             {
                 if (missing(field.types)) field.types <- NULL
-                sql <- .db.buildTableDefinition(conn, table, r.obj, field.types, add.row.names, dist.str, is.temp)
+                sql <- .db.buildTableDefinition(conn, table, r.obj,
+                                                field.types, add.row.names,
+                                                dist.str, is.temp)
                 rs <- try(RPostgreSQL::dbSendQuery(conn, sql))
-                if (is.temp) name <- (.db.existsTempTable(table, conn.id))[[2]]
+                if (is.temp) name <- (.db.existsTempTable(table,
+                                                          conn.id))[[2]]
                 if(inherits(rs, RPostgreSQL:::ErrorClass))
                 {
                     warning("could not create table: aborting assignTable")

@@ -3,50 +3,53 @@
 ## Convert other R objects into db.data.frame
 ## ------------------------------------------------------------------------
 
-setGeneric ("as.db.data.frame",
-            def = function (x, ...) standardGeneric("as.db.data.frame"),
-            signature = "x")
+setGeneric (
+    "as.db.data.frame",
+    def = function (x, ...) standardGeneric("as.db.data.frame"),
+    signature = "x")
 
 ## ------------------------------------------------------------------------
 
 ## put a data.frame into a db.data.frame
-setMethod ("as.db.data.frame",
-           signature (x = "data.frame"),
-           def = function (
-           x, table.name, conn.id = 1, add.row.names = FALSE,
-           id.col = character(0), distributed.by = NULL,
-           is.temp = FALSE, ...)
-           .method.as.db.data.frame.1(x, table.name, conn.id,
-                                      add.row.names, id.col,
-                                      distributed.by, is.temp, ...),
-           valueClass = "db.data.frame")
+setMethod (
+    "as.db.data.frame",
+    signature (x = "data.frame"),
+    def = function (
+    x, table.name, conn.id = 1, add.row.names = FALSE,
+    id.col = character(0), distributed.by = NULL,
+    is.temp = FALSE, ...)
+    .method.as.db.data.frame.1(x, table.name, conn.id,
+                               add.row.names, id.col,
+                               distributed.by, is.temp, ...),
+    valueClass = "db.data.frame")
 
 ## ------------------------------------------------------------------------
 
 ## put a file into a db.data.frame
 ## put a data.frame into a db.data.frame
-setMethod ("as.db.data.frame",
-           signature (x = "character"),
-           def = function (
-           x, table.name, conn.id = 1, add.row.names = FALSE,
-           id.col = character(0), distributed.by = NULL,
-           is.temp = FALSE, ...)
-           .method.as.db.data.frame.1(x, table.name, conn.id,
-                                      add.row.names, id.col,
-                                      distributed.by, is.temp, ...),
-           valueClass = "db.data.frame")
+setMethod (
+    "as.db.data.frame",
+    signature (x = "character"),
+    def = function (
+    x, table.name, conn.id = 1, add.row.names = FALSE,
+    id.col = character(0), distributed.by = NULL,
+    is.temp = FALSE, ...)
+    .method.as.db.data.frame.1(x, table.name, conn.id,
+                               add.row.names, id.col,
+                               distributed.by, is.temp, ...),
+    valueClass = "db.data.frame")
 
 ## ------------------------------------------------------------------------
 
-.method.as.db.data.frame.1 <- function (x, table.name, conn.id = 1, add.row.names = FALSE,
-                                        id.col = character(0), distributed.by = NULL,
-                                        is.temp = FALSE, ...) {
-    print(id.col)
-    print(.is.arg.string(id.col))
+.method.as.db.data.frame.1 <- function (
+    x, table.name, conn.id = 1, add.row.names = FALSE,
+    id.col = character(0), distributed.by = NULL,
+    is.temp = FALSE, ...)
+{
     if (!.is.arg.string(id.col)) stop("ID column name must be a string!")
     if (length(nchar(id.col)) > 0 &&
         id.col == "row.names" && !add.row.names)
-        stop("If you want to use row.names as id.col, you have to set row.names as TRUE!")
+        stop("Set row.names as TRUE if you want to use row.names as id.col!")
     ## argument default, and checking
     ## if (missing(conn.id)) conn.id <- 1
     if (!.is.conn.id.valid(conn.id))

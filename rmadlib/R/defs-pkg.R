@@ -37,7 +37,8 @@
 ## .localVars has the following variables inside it
 ## (1) installed.pkgs - all packages avilable in user's path
 ## (2) db - a list of connection info
-## (3) conn.type - a list with vector element, contains connection pkg for each conn id
+## (3) conn.type - a list with vector element, contains connection pkg
+## for each conn id
 ## (4) drv - drivers for each connection packages
 
 
@@ -63,8 +64,8 @@ setClass("db.data.frame",
 ## table, a sub-class of db.obj
 setClass("db.table",
          representation(
-             .id.col = "character", # which column is used to identify different rows,
-                                        # i.e. index
+             .id.col = "character", # which column is used to
+             ## identify different rows, i.e. index
              .dim = "numeric" # dimension of table
              ),
          contains = "db.data.frame")
