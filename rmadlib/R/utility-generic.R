@@ -183,7 +183,8 @@
     f.intercept <- attr(f.terms, "intercept")
     labels <- gsub(":", "*", f.labels) # replace interaction : with *
     labels <- gsub("I\\((.*)\\)", "\\1", labels) # remove I()
-    if (!is.null(f2.labels)) # remove grouping columns
+    ## remove grouping columns, when there is no intercept term
+    if (!is.null(f2.labels) && f.intercept == 0) 
         labels <- setdiff(labels, f2.labels)
     ##
     dep.var <- rownames(f.factors)[1] # dependent variable
