@@ -14,8 +14,7 @@ is.db.data.frame <- function (x)
 portion <- function(x, nrows = 100)
 {
     if (! inherits(x, "db.data.frame"))
-        stop(paste(deparse(substitute(x)),
-                   "must be a db.data.frame object!"))
+        stop(deparse(substitute(x)), " must be a db.data.frame object!")
 
     if (! inherits(x, "db.view")) {
         cat(deparse(substitute(x)),
@@ -37,7 +36,7 @@ portion <- function(x, nrows = 100)
 ## ------------------------------------------------------------------------
 ## ------------------------------------------------------------------------
 
-setGeneric ("sample", signature = "x")
+setGeneric ("sample")
 
 setMethod(
     "sample",

@@ -27,6 +27,8 @@ setMethod (
 
 ## ------------------------------------------------------------------------
 
+## setGeneric ("show", signature = "object")
+
 setMethod (
     "show",
     signature (object = "db.data.frame"),

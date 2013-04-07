@@ -5,20 +5,37 @@
 
 ## ------------------------------------------------------------------------
 
-## convert {...} string into an array
-.db.str2vec <- function (str, type = "double")
+## convert {...} string into an arrayparams$grp.str
+.str2vec <- function (str, type = "double")
 {
-    elm <- regmatches(str,
-                      gregexpr("[^,\"\\s\\{\\}]+|\"(\\\"|[^\"])*\"",
-                               str, perl=T))[[1]]
+    if (is.null(str)) return (NULL)
+    
     if (type == "character")
-        return (elm)
+        res <- character(0)
     else if (type == "integer")
-        return (as.integer(elm))
+        res <- integer(0)
     else if (type == "logical")
-        return (as.logical(toupper(elm)))
+        res <- logical(0)
     else
-        return (as.numeric(elm))
+        res <- numeric(0)
+    
+    for (i in seq_len(str))
+    {
+        elm <- regmatches(str[i],
+                          gregexpr("[^,\"\\s\\{\\}]+|\"(\\\"|[^\"])*\"",
+                                   str, perl=T))[[1]]
+        if (type == "character")
+            elm <- as.character(elm)
+        else if (type == "integer")
+            elm <- as.integer(elm)
+        else if (type == "logical")
+            elm <- as.logical(elm)
+        else
+            elm <- as.numeric(elm)
+        
+        res <- rbind(res, elm)
+    }
+    res
 }
 
 ## ------------------------------------------------------------------------
@@ -54,7 +71,7 @@
 ##     } else if (length(parts) == 1) {
 ##         table_name <- parts[1]
    
-##         schemas <- .db.str2vec(.db.getQuery("select current_schemas(True)", conn.id),
+##         schemas <- .str2vec(.db.getQuery("select current_schemas(True)", conn.id),
 ##                                type = "character")
 ##         table_schema <- NULL
 ##         for (schema in schemas)
@@ -179,7 +196,9 @@
                      paste(labels, collapse = ","),
                      "]", sep = "") # independent variable
     ##
-    list(dep.str = dep.var, ind.str = ind.var, grp.str = grp)
+    list(dep.str = dep.var, ind.str = ind.var, grp.str = grp,
+         ind.vars = labels,
+         has.intercept = as.logical(f.intercept))
 }
 
 ## ------------------------------------------------------------------------

@@ -93,3 +93,13 @@ setMethod (
     
     db.data.frame(table.name, conn.id, id.col)
 }
+
+## ------------------------------------------------------------------------
+
+setMethod (
+    "as.db.data.frame",
+    signature (x = "db.Rquery"),
+    def = function (x, table.name, conn.id, is.temp = FALSE) {
+        stop("To be implemented !")
+    },
+    valueClass = "db.data.frame")

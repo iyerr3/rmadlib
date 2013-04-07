@@ -57,8 +57,8 @@ db.connect <- function (host, user, dbname, password = "", port = "",
     }
     else
     {
-        stop(paste("Right now, only ", .supported.connections,
-                   " is supported to connected to database.\n", sep = ""))
+        stop("Right now, only ", .supported.connections,
+             " is supported to connected to database.\n")
     }
 }
 
@@ -210,7 +210,7 @@ db.list <- function ()
     }
     else
     {
-        schemas <- .db.str2vec(
+        schemas <- .str2vec(
             .db.getQuery("select current_schemas(True)", conn.id),
             type = "character")
         table_schema <- NULL

@@ -1,6 +1,8 @@
 
+## ------------------------------------------------------------------------
 ## Small utility functions to extract information
 ## about a given connection
+## ------------------------------------------------------------------------
 
 dbname <- function (conn.id = 1)
 {
@@ -10,6 +12,8 @@ dbname <- function (conn.id = 1)
     .localVars$db[[id]]$dbname
 }
 
+## ------------------------------------------------------------------------
+
 host <- function (conn.id = 1)
 {
     if (!.is.conn.id.valid(conn.id))
@@ -17,6 +21,8 @@ host <- function (conn.id = 1)
     id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
     .localVars$db[[id]]$host
 }
+
+## ------------------------------------------------------------------------
 
 user <- function (conn.id = 1)
 {
@@ -26,6 +32,8 @@ user <- function (conn.id = 1)
     .localVars$db[[id]]$user
 }
 
+## ------------------------------------------------------------------------
+
 conn.pkg <- function (conn.id = 1)
 {
     if (!.is.conn.id.valid(conn.id))
@@ -34,4 +42,21 @@ conn.pkg <- function (conn.id = 1)
     pkg <- .localVars$db[[id]]$conn.pkg
     i <- which(tolower(.supported.connections) == pkg)
     .supported.connections[i]
+}
+
+## ------------------------------------------------------------------------
+
+schema.madlib <- function (conn.id = 1)
+{
+    id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
+    .localVars$db[[id]]$madlib
+}
+
+## ------------------------------------------------------------------------
+
+madlib.version <- function (conn.id = 1)
+{
+    as.character(.db.getQuery(paste("select ", schema.madlib(conn.id),
+                                    ".version()", sep = ""),
+                              conn.id))
 }
