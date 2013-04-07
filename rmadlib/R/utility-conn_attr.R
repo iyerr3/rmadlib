@@ -50,14 +50,29 @@ conn.pkg <- function (conn.id = 1)
 ## connection itself
 conn <- function (conn.id = 1)
 {
+    if (!.is.conn.id.valid(conn.id))
+        stop("There is no such connection!")
     id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
     .localVars$db[[id]]$conn
 }
 
 ## ------------------------------------------------------------------------
 
+## Get the DBMS version info
+dbms <- function (conn.id = 1)
+{
+    if (!.is.conn.id.valid(conn.id))
+        stop("There is no such connection!")
+    res <- .db.getQuery("select version()", conn.id)
+    as.character(res)
+}
+
+## ------------------------------------------------------------------------
+
 schema.madlib <- function (conn.id = 1)
 {
+    if (!.is.conn.id.valid(conn.id))
+        stop("There is no such connection!")
     id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
     .localVars$db[[id]]$madlib
 }
@@ -66,6 +81,8 @@ schema.madlib <- function (conn.id = 1)
 
 madlib.version <- function (conn.id = 1)
 {
+    if (!.is.conn.id.valid(conn.id))
+        stop("There is no such connection!")
     as.character(.db.getQuery(paste("select ", schema.madlib(conn.id),
                                     ".version()", sep = ""),
                               conn.id))

@@ -167,7 +167,7 @@
         inter <- intersect(f2.labels, names(data))
         if (length(inter) != length(f2.labels))
             stop("The grouping part of the formula is not quite right!")
-        grp <- paste(f2.labels, collapse = " ")
+        grp <- paste(f2.labels, collapse = ", ")
     } else {
         f2.labels <- NULL
         grp <- NULL
@@ -188,7 +188,8 @@
     if (!is.null(f2.labels) && f.intercept != 0) 
         labels <- setdiff(labels, f2.labels)
     ##
-    dep.var <- rownames(f.factors)[1] # dependent variable
+    ## dependent variable
+    dep.var <- gsub("I\\((.*)\\)", "\\1", rownames(f.factors)[1]) 
     ## with or without intercept
     if (f.intercept == 0)
         intercept.str <- ""

@@ -2,7 +2,7 @@
 
 export("db.connect", "db.disconnect", "db.list")
 
-export ("conn.pkg", "host", "dbname", "user",
+export ("conn.pkg", "host", "dbname", "user", "dbms",
         "schema.madlib", "madlib.version", "madlib")
 
 export ("db.data.frame", "as.db.data.frame")

@@ -19,3 +19,9 @@ fit
 fit <- madlib.lm(interlocks ~ assets + sector + nation + I(assets^2), data = x, heteroskedasticity = T)
 
 fit
+
+## ------------------------------------------------------------------------
+
+git <- madlib.glm(I(interlocks<10) ~ assets | nation + sector, data = x, family = "binomial")
+
+git

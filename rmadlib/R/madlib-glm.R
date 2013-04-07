@@ -8,13 +8,14 @@
 ## family specific parameters are in control, which
 ## is a list of parameters
 madlib.glm <- function (formula, data, family = "gaussian",
-                        na.action, control = list(), ...)
+                        na.action = "na.omit", control = list(), ...)
 {
     args <- control
     args$formula <- formula
     args$data <- data
     args$na.action <- na.action
-
+    args$call <- deparse(match.call())
+    
     if (tolower(family) == "gaussian" || tolower(family) == "linear")
         return (do.call(madlib.lm, args))
 
@@ -31,7 +32,7 @@ madlib.glm <- function (formula, data, family = "gaussian",
 ## ------------------------------------------------------------------------
 
 .madlib.logregr <- function (formula, data, na.action, method = "irls",
-                             max_iter = 10000, tolerance = 1e-5)
+                             max_iter = 10000, tolerance = 1e-5, call)
 {
     ## make sure fitting to db.obj
     if (! inherits(data, "db.obj"))
@@ -105,7 +106,7 @@ madlib.glm <- function (formula, data, family = "gaussian",
     rst$grp.cols <- as.vector(.str2vec(params$grp.str, "character"))
     rst$has.intercept <- params$has.intercept # do we have an intercept
     rst$ind.vars <- params$ind.vars
-    rst$call <- deparse(match.call()) # the current function call itself
+    rst$call <- call # the current function call itself
 
     class(rst) <- "logregr.madlib" # use this to track summary
     rst
@@ -143,8 +144,8 @@ print.logregr.madlib <- function (x,
         {
             cat("When\n")
             for (col in x$grp.cols)
-                cat(col, ": ", x[[col]][i], "\n\n", sep = "")
-            cat("We have\n")
+                cat(col, ": ", x[[col]][i], ",\n", sep = "")
+            cat("\n")
         }
 
         cat("Coefficients:\n")
@@ -179,7 +180,7 @@ print.logregr.madlib <- function (x,
         cat("Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n")
         cat("Log likelihood:", x$log_likelihood[i], "\n")
         cat("Condition Number:", x$condition_no[i], "\n")
-        cat("Number of iterations:", x$num_iterations)
+        cat("Number of iterations:", x$num_iterations[i], "\n")
     }
 
     cat("\n")
@@ -195,7 +196,7 @@ show.logregr.madlib <- function (object)
 ## ------------------------------------------------------------------------
 
 .madlib.mlogregr <- function (formula, data, na.action, method = "irls",
-                              max_iter = 10000, tolerance = 1e-5)
+                              max_iter = 10000, tolerance = 1e-5, call)
 {
     stop("To be implemented!")
 }
