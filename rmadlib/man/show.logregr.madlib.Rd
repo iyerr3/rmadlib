@@ -1,6 +1,5 @@
-\name{madlib.version}
-\alias{madlib.version}
-\alias{madlib}
+\name{show.logregr.madlib}
+\alias{show.logregr.madlib}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 function to do ... ~~
@@ -9,13 +8,12 @@ function to do ... ~~
 A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-madlib.version(conn.id = 1)
-madlib(conn.id = 1)
+\method{show}{logregr.madlib}(object)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{conn.id}{
-Describe \code{conn.id} here~~
+  \item{object}{
+Describe \code{object} here~~
 }
 }
 \details{
@@ -50,7 +48,7 @@ objects to See Also as \code{\link{help}}, ~~~
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-"madlib.version"
+"show.logregr.madlib"
 ## End (Not run)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

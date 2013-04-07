@@ -1,14 +1,37 @@
 
 ## ------------------------------------------------------------------------
-## Wrapper function for MADlib's lm function
+## Wrapper function for MADlib's linear, logistic and multinomial
+## logistic regressions
 ## ------------------------------------------------------------------------
 
 ## na.action is a place holder
-## will implement later in R (using temp table), or will implement
-## in MADlib
-## method is also a place holder, right now only one method
-madlib.lm <- function (formula, data, na.action, method,
-                       heteroskedasticity = FALSE) # param name too long
+## family specific parameters are in control, which
+## is a list of parameters
+madlib.glm <- function (formula, data, family = "gaussian",
+                        na.action, control = list(), ...)
+{
+    args <- control
+    args$formula <- formula
+    args$data <- data
+    args$na.action <- na.action
+
+    if (tolower(family) == "gaussian" || tolower(family) == "linear")
+        return (do.call(madlib.lm, args))
+
+    if (tolower(family) == "binomial" || tolower(family) == "logistic")
+        return (do.call(.madlib.logregr, args))
+
+    if (family == "multinomial")
+        return (do.call(.madlib.mlogregr, args))
+
+    cat("\nThe family", family, "is not supported!\n")
+    return
+}
+
+## ------------------------------------------------------------------------
+
+.madlib.logregr <- function (formula, data, na.action, method = "irls",
+                             max_iter = 10000, tolerance = 1e-5)
 {
     ## make sure fitting to db.obj
     if (! inherits(data, "db.obj"))
@@ -33,24 +56,25 @@ madlib.lm <- function (formula, data, na.action, method,
     ## dependent, independent and grouping strings
     params <- .analyze.formula(formula, data)
     if (is.null(params$grp.str))
-        grp <- "NULL::text[]"
+        grp <- "NULL::text"
     else
-        grp <- paste("'{", params$grp.str, "}'::text[]")
+        grp <- paste("'", params$grp.str, "'")
 
     ## construct SQL string
     conn.id <- conn.id(data)
     tbl.source <- content(data)
     tbl.output <- .unique.string()
     madlib <- schema.madlib(conn.id) # MADlib schema name
-    sql <- paste("select ", madlib, ".linregr_train('",
+    sql <- paste("select ", madlib, ".logregr_train('",
                  tbl.source, "', '", tbl.output, "', '",
                  params$dep.str, "', '", params$ind.str, "', ",
-                 grp, ", ", heteroskedasticity, ")", sep = "")
+                 grp, ", ", max_iter, ", '", method, "', ",
+                 tolerance, ")", sep = "")
 
     ## execute the linear regression
     res <- try(.db.getQuery(sql, conn.id), silent = TRUE)
     if (inherits(res, .err.class))
-        stop("Could not run MADlib linear regression !")
+        stop("Could not run MADlib logistic regression !")
 
     ## retreive result
     res <- try(.db.getQuery(paste("select * from", tbl.output), conn.id),
@@ -72,8 +96,9 @@ madlib.lm <- function (formula, data, na.action, method,
         rst[[res.names[i]]] <- res[[res.names[i]]]
     rst$coef <- .str2vec(res$coef, "double")
     rst$std_err <- .str2vec(res$std_err, "double")
-    rst$t_stats <- .str2vec(res$t_stats, "double")
+    rst$z_stats <- .str2vec(res$z_stats, "double")
     rst$p_values <- .str2vec(res$p_values, "double")
+    rst$odds_ratios <- .str2vec(res$odds_ratios, "double")
 
     ## other useful information
     rst$grps <- dim(rst$coef)[1] # how many groups
@@ -82,13 +107,13 @@ madlib.lm <- function (formula, data, na.action, method,
     rst$ind.vars <- params$ind.vars
     rst$call <- deparse(match.call()) # the current function call itself
 
-    class(rst) <- "lm.madlib" # use this to track summary
+    class(rst) <- "logregr.madlib" # use this to track summary
     rst
 }
 
 ## ------------------------------------------------------------------------
 
-summary.lm.madlib <- function (object, ...)
+summary.logregr.madlib <- function (object, ...)
 {
     object
 }
@@ -96,9 +121,10 @@ summary.lm.madlib <- function (object, ...)
 ## ------------------------------------------------------------------------
 
 ## Pretty format of linear regression result
-print.lm.madlib <- function (x,
-                             digits = max(3L, getOption("digits") - 3L),
-                             ...)
+print.logregr.madlib <- function (x,
+                                  digits = max(3L,
+                                  getOption("digits") - 3L),
+                                  ...)
 {
     if (x$has.intercept)
         rows <- c("(Intercept)", x$ind.vars)
@@ -106,7 +132,7 @@ print.lm.madlib <- function (x,
         rows <- x$ind.vars
     ind.width <- .max.width(rows)
 
-    cat("\nMADlib Linear Regression Result\n")
+    cat("\nMADlib Logistic Regression Result\n")
     cat("\nCall:\n", x$call, "\n", sep = "")
     if (x$grps > 1)
         cat("\nThe data is divided into", x$grps, "groups\n")
@@ -124,8 +150,9 @@ print.lm.madlib <- function (x,
         cat("Coefficients:\n")
         coef <- format(x$coef[i,], digits = digits)
         std.err <- format(x$std_err[i,], digits = digits)
-        t.stats <- format(x$t_stats[i,], digits = digits)
-
+        z.stats <- format(x$z_stats[i,], digits = digits)
+        odds.ratios <- format(x$odds_ratios[i,], digits = digits)
+        
         stars <- rep("", length(x$p_values[i,]))
         for (j in seq(x$p_values[i,]))
             if (x$p_values[i,j] < 0.001)
@@ -142,21 +169,17 @@ print.lm.madlib <- function (x,
                           stars)
         output <- data.frame(cbind(Estimate = coef,
                                    `Std. Error` = std.err,
-                                   `t value` = t.stats,
-                                   `Pr(>|t|)` = p.values),
+                                   `z value` = z.stats,
+                                   `Pr(>|t|)` = p.values,
+                                   `Odds ratio` = odds.ratios),
                              row.names = rows, check.names = FALSE)
         print(format(output, justify = "left"))
 
         cat("---\n")
         cat("Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n")
-        cat("R-squared:", x$r2[i], "\n")
+        cat("Log likelihood:", x$log_likelihood[i], "\n")
         cat("Condition Number:", x$condition_no[i], "\n")
-
-        if (!is.null(x$bp_stats))
-        {
-            cat("Breusch-Pagan test statistics:", x$bp_stats[i], "\n")
-            cat("Breusch-Pagan test p-value:", x$bp_p_value[i], "\n")
-        }        
+        cat("Number of iterations:", x$num_iterations)
     }
 
     cat("\n")
@@ -164,7 +187,15 @@ print.lm.madlib <- function (x,
 
 ## ------------------------------------------------------------------------
 
-show.lm.madlib <- function (object)
+show.logregr.madlib <- function (object)
 {
     print(object)
+}
+
+## ------------------------------------------------------------------------
+
+.madlib.mlogregr <- function (formula, data, na.action, method = "irls",
+                              max_iter = 10000, tolerance = 1e-5)
+{
+    stop("To be implemented!")
 }

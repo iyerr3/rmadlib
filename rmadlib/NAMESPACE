@@ -3,7 +3,7 @@
 export("db.connect", "db.disconnect", "db.list")
 
 export ("conn.pkg", "host", "dbname", "user",
-        "schema.madlib", "madlib.version")
+        "schema.madlib", "madlib.version", "madlib")
 
 export ("db.data.frame", "as.db.data.frame")
 
@@ -20,5 +20,8 @@ export ("is.db.data.frame", "portion")
 
 export ("madlib.lm", "summary.lm.madlib",
         "print.lm.madlib", "show.lm.madlib")
+
+export ("madlib.glm", "summary.logregr.madlib",
+        "print.logregr.madlib", "show.logregr.madlib")
 
 export ("sample")

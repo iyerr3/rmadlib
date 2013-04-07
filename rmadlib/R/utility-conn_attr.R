@@ -70,3 +70,8 @@ madlib.version <- function (conn.id = 1)
                                     ".version()", sep = ""),
                               conn.id))
 }
+
+madlib <- function (conn.id = 1)
+{
+    madlib.version(conn.id)
+}

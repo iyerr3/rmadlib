@@ -1,21 +1,34 @@
-\name{madlib.version}
-\alias{madlib.version}
-\alias{madlib}
+\name{madlib.glm}
+\alias{madlib.glm}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 function to do ... ~~
 }
 \description{
-A concise (1-5 lines) description of what the function does. ~~
+ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-madlib.version(conn.id = 1)
-madlib(conn.id = 1)
+madlib.glm(formula, data, family = "gaussian", na.action, control = list(), ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{conn.id}{
-Describe \code{conn.id} here~~
+  \item{formula}{
+Describe \code{formula} here~~
+}
+  \item{data}{
+Describe \code{data} here~~
+}
+\item{family}{
+Describe \code{family} here ~~
+}
+  \item{na.action}{
+Describe \code{na.action} here~~
+}
+  \item{control}{
+Describe \code{control} here~~
+}
+\item{...}{
+    Describe ... here
 }
 }
 \details{
@@ -50,7 +63,7 @@ objects to See Also as \code{\link{help}}, ~~~
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-"madlib.version"
+"madlib.glm"
 ## End (Not run)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
