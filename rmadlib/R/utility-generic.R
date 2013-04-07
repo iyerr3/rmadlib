@@ -19,11 +19,11 @@
     else
         res <- numeric(0)
     
-    for (i in seq_len(str))
+    for (i in seq(str))
     {
         elm <- regmatches(str[i],
                           gregexpr("[^,\"\\s\\{\\}]+|\"(\\\"|[^\"])*\"",
-                                   str, perl=T))[[1]]
+                                   str[i], perl=T))[[1]]
         if (type == "character")
             elm <- as.character(elm)
         else if (type == "integer")
@@ -35,6 +35,7 @@
         
         res <- rbind(res, elm)
     }
+    row.names(res) <- NULL
     res
 }
 
@@ -184,7 +185,7 @@
     labels <- gsub(":", "*", f.labels) # replace interaction : with *
     labels <- gsub("I\\((.*)\\)", "\\1", labels) # remove I()
     ## remove grouping columns, when there is no intercept term
-    if (!is.null(f2.labels) && f.intercept == 0) 
+    if (!is.null(f2.labels) && f.intercept != 0) 
         labels <- setdiff(labels, f2.labels)
     ##
     dep.var <- rownames(f.factors)[1] # dependent variable

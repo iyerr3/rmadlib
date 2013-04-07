@@ -16,6 +16,10 @@ madlib.lm <- function (formula, data, na.action, method,
              deparse(substitute(data)))
 
     msg.level <- .set.msg.level("panic") # suppress all messages
+    ## disable warning in R, RPostgreSQL
+    ## prints some unnessary warning messages
+    warn.r <- getOption("warn")
+    options(warn = -1)
     
     ## create temp table for db.Rquery objects
     is.tbl.source.temp <- FALSE
@@ -59,11 +63,12 @@ madlib.lm <- function (formula, data, na.action, method,
     if (is.tbl.source.temp) .db.removeTable(tbl.source, conn.id)
     
     msg.level <- .set.msg.level(msg.level) # reset message level
+    options(warn = warn.r) # reset R warning level
     
     ## organize the result
     rst <- list()
     res.names <- names(res)
-    for (i in seq_len(res.names))
+    for (i in seq(res.names))
         rst[[res.names[i]]] <- res[[res.names[i]]]
     rst$coef <- .str2vec(res$coef, "double")
     rst$std_err <- .str2vec(res$std_err, "double")
@@ -103,6 +108,8 @@ print.lm.madlib <- function (x,
 
     cat("\nLinear Regression Result\n")
     cat("\nCall:\n", x$call, "\n", sep = "")
+    if (x$grps > 1)
+        cat("\nThe data is divided into", x$grps, "groups\n")
     for (i in seq_len(x$grps))
     {
         cat("\n---------------------------------------\n\n")
@@ -110,45 +117,45 @@ print.lm.madlib <- function (x,
         {
             cat("When\n")
             for (col in x$grp.cols)
-                cat(col, ": ", x[[col]][i], "\n", sep = "")
-            cat("We have\n\n")
+                cat(col, ": ", x[[col]][i], "\n\n", sep = "")
+            cat("We have\n")
         }
 
         cat("Coefficients:\n")
-        coef <- format(x$coef, digits = digits)
-        std.err <- format(x$std_err, digits = digits)
-        t.stats <- format(x$t_stats, digits = digits)
+        coef <- format(x$coef[i,], digits = digits)
+        std.err <- format(x$std_err[i,], digits = digits)
+        t.stats <- format(x$t_stats[i,], digits = digits)
 
-        stars <- rep("", length(x$p_values))
-        for (j in seq_len(length(x$p_values)))
-            if (x$p_values[j] < 0.001)
+        stars <- rep("", length(x$p_values[i,]))
+        for (j in seq(x$p_values[i,]))
+            if (x$p_values[i,j] < 0.001)
                 stars[j] <- "***"
-            else if (x$p_values[j] < 0.01)
+            else if (x$p_values[i,j] < 0.01)
                 stars[j] <- "**"
-            else if (x$p_values[j] < 0.05)
+            else if (x$p_values[i,j] < 0.05)
                 stars[j] <- "*"
-            else if (x$p_values[j] < 0.1)
+            else if (x$p_values[i,j] < 0.1)
                 stars[j] <- "."
             else
                 stars[j] <- " "
-        p.values <- paste(format(x$p_values, digits = digits),
+        p.values <- paste(format(x$p_values[i,], digits = digits),
                           stars)
         output <- data.frame(cbind(Estimate = coef,
-                                   "Std. Error" = std.err,
-                                   "t value" = t.stats,
-                                   "Pr(>|t|)" = p.values),
-                             row.names = rows)
-        print(output)
+                                   `Std. Error` = std.err,
+                                   `t value` = t.stats,
+                                   `Pr(>|t|)` = p.values),
+                             row.names = rows, check.names = FALSE)
+        print(format(output, justify = "left"))
 
         cat("---\n")
         cat("Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n")
-        cat("R-squared:", x$r2, "\n")
-        cat("Condition Number:", x$condition_no, "\n")
+        cat("R-squared:", x$r2[i], "\n")
+        cat("Condition Number:", x$condition_no[i], "\n")
 
         if (!is.null(x$bp_stats))
         {
-            cat("Breusch$(G!9(BPagan test statistics:", x$bp_stats, "\n")
-            cat("Breusch$(G!9(BPagan test p-value:", x$bp_p_value, "\n")
+            cat("Breusch-Pagan test statistics:", x$bp_stats[i], "\n")
+            cat("Breusch-Pagan test p-value:", x$bp_p_value[i], "\n")
         }        
     }
 

@@ -79,17 +79,17 @@ setMethod (
                            id.col, "\")", sep = ""))
 
     if (is.data.frame(x)) {
-        cat("The data in the data.frame", deparse(substitute(x)),
+        cat("\nThe data in the data.frame", deparse(substitute(x)),
             "is stored into the table", table.name, "in database",
-            dbname(conn.id), "on", host(conn.id), "!\n")
+            dbname(conn.id), "on", host(conn.id), "!\n\n")
     } else {
-        cat("The data in the file", x,
+        cat("\nThe data in the file", x,
             "is stored into the table", table.name, "in database",
-            dbname(conn.id), "on", host(conn.id), "!\n")
+            dbname(conn.id), "on", host(conn.id), "!\n\n")
     }
-    cat("An R object pointing to", table.name,
+    cat("\nAn R object pointing to", table.name,
         "in database", dbname(conn.id), "on", host(conn.id),
-        "is created !\n")
+        "is created !\n\n")
     
     db.data.frame(table.name, conn.id, id.col)
 }

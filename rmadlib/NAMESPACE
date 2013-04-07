@@ -12,7 +12,7 @@ exportClasses ("db.obj", "db.Rquery", "db.data.frame",
 
 exportMethods ("dim", "names")
 
-export ("content", "conn.id", "conn.id<-")
+export ("content", "conn.id", "conn.id<-", "conn")
 
 exportMethods ("print", "show")
 

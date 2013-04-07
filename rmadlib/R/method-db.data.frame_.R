@@ -54,9 +54,9 @@ db.data.frame <- function (x, conn.id = 1, id.col = character(0))
               .db.table.schema.str(table), sep = ""), conn.id)
     res@.table.type <- tbl.type$table_type
 
-    cat("An R object pointing to", x,
+    cat("\nAn R object pointing to", x,
         "in database", dbname(conn.id), "on", host(conn.id),
-        "is created !\n")
+        "is created !\n\n")
     
     return (res)
 }

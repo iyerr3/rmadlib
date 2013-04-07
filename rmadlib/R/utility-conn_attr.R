@@ -34,6 +34,7 @@ user <- function (conn.id = 1)
 
 ## ------------------------------------------------------------------------
 
+## connection package
 conn.pkg <- function (conn.id = 1)
 {
     if (!.is.conn.id.valid(conn.id))
@@ -42,6 +43,15 @@ conn.pkg <- function (conn.id = 1)
     pkg <- .localVars$db[[id]]$conn.pkg
     i <- which(tolower(.supported.connections) == pkg)
     .supported.connections[i]
+}
+
+## ------------------------------------------------------------------------
+
+## connection itself
+conn <- function (conn.id = 1)
+{
+    id <- .localVars$conn.id[.localVars$conn.id[,1] == conn.id, 2]
+    .localVars$db[[id]]$conn
 }
 
 ## ------------------------------------------------------------------------
