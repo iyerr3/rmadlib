@@ -88,7 +88,8 @@ setClass("db.view",
 setClass("db.Rquery",
          representation(
              .content = "character",
-             .conn.id = "numeric"
+             .conn.id = "numeric",
+             .col.name = "character"
              )
          )
 

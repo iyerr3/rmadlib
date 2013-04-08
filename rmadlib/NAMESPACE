@@ -25,3 +25,5 @@ export ("madlib.glm", "summary.logregr.madlib",
         "print.logregr.madlib", "show.logregr.madlib")
 
 export ("sample")
+
+exportMethods("$", "[[")

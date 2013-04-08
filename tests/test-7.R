@@ -22,6 +22,15 @@ fit
 
 ## ------------------------------------------------------------------------
 
-git <- madlib.glm(I(interlocks<10) ~ assets | nation + sector, data = x, family = "binomial")
+git <- madlib.glm(I(interlocks<10) ~ assets + sector + nation, data = x, family = "binomial")
 
 git
+
+
+dat <- rmadlib:::.db.getQuery("select * from madlibtestdata.lin_ornstein")
+
+dat$y <- factor(as.integer(dat$interlocks < 10) + 2)
+
+g <- glm(y ~ assets + sector + nation, family = binomial, data = dat)
+
+summary(g)
