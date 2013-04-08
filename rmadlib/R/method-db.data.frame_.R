@@ -3,7 +3,7 @@
 ## create a R object that points to something inside the database
 ## ------------------------------------------------------------------------
 
-db.data.frame <- function (x, conn.id = 1, id.col = character(0))
+db.data.frame <- function (x, conn.id = 1, key = character(0))
 {
     if (! .is.arg.string(x))
         stop("The name of the database object must be a string!")
@@ -22,7 +22,7 @@ db.data.frame <- function (x, conn.id = 1, id.col = character(0))
                    .name = table,
                    .content = x,
                    .conn.id = conn.id,
-                   .id.col = character(0))
+                   .key = character(0))
     }
     else
     {
@@ -31,7 +31,7 @@ db.data.frame <- function (x, conn.id = 1, id.col = character(0))
                    .name = table,
                    .content = x,
                    .conn.id = conn.id,
-                   .id.col = id.col)
+                   .key = key)
     }
 
     col.info <- .db.getQuery(

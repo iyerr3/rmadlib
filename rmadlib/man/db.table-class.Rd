@@ -13,7 +13,7 @@ describe objects here ~~
 }
 \section{Slots}{
   \describe{
-    \item{\code{.id.col}:}{Object of class \code{"character"} ~~ }
+    \item{\code{.key}:}{Object of class \code{"character"} ~~ }
     \item{\code{.dim}:}{Object of class \code{"numeric"} ~~ }
     \item{\code{.name}:}{Object of class \code{"character"} ~~ }
     \item{\code{.conn.id}:}{Object of class \code{"numeric"} ~~ }

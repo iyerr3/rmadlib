@@ -10,17 +10,17 @@ setMethod (
         if (! name %in% names(x))
             stop(paste("Column", name, "does not exist!"))
 
-        if (identical(x@.id.col, character(0)))
+        if (identical(x@.key, character(0)))
             id.str <- ""
         else
-            id.str <- paste(x@.id.col, ", ", sep = "")
+            id.str <- paste(x@.key, ", ", sep = "")
         
         new("db.Rquery",
             .content = paste("select ", id.str, name,
             " from ", content(x), sep = ""),
             .conn.id = conn.id(x),
             .col.name = name,
-            .id.col = x@.id.col)
+            .key = x@.key)
     },
     valueClass = "db.Rquery")
 
@@ -33,17 +33,17 @@ setMethod (
         if (! name %in% x@.col.name)
             stop(paste("Column", name, "does not exist!"))
 
-        if (identical(x@.id.col, character(0)))
+        if (identical(x@.key, character(0)))
             id.str <- ""
         else
-            id.str <- paste(x@.id.col, ", ", sep = "")
+            id.str <- paste(x@.key, ", ", sep = "")
 
         new("db.Rquery",
             .content = paste("select ", id.str, name,
             " from (", content(x), ") s", sep = ""),
             .conn.id = conn.id(x),
             .col.name = name,
-            .id.col = x@.id.col)
+            .key = x@.key)
     },
     valueClass = "db.Rquery"
     )
@@ -58,10 +58,10 @@ setMethod(
         if (na == 1)
             stop("What do you want to do?")
 
-        if (identical(x@.id.col, character(0)))
+        if (identical(x@.key, character(0)))
             id.str <- ""
         else
-            id.str <- paste(x@.id.col, ", ", sep = "")
+            id.str <- paste(x@.key, ", ", sep = "")
         
         if (na == 2)
         {
@@ -72,7 +72,7 @@ setMethod(
                         i, " from ", content(x), sep = ""),
                         .conn.id = conn.id(x),
                         .col.name = i,
-                        .id.col = x@.id.col)
+                        .key = x@.key)
                 } else {
                     stop(paste("Column", i, "does not exist!"))
                 }
@@ -88,13 +88,13 @@ setMethod(
                     sep = ""),
                     .conn.id = conn.id(x),
                     .col.name = names(x)[[ii]],
-                    .id.col = x@.id.col)
+                    .key = x@.key)
             }
         }
         else if (na == 3)
         {
             
-            if (identical(x@.id.col, character(0)) == 0)
+            if (identical(x@.key, character(0)) == 0)
                 stop("There is no unique ID associated with each row of the table!")
 
             if (is.character(j))
@@ -113,11 +113,11 @@ setMethod(
 
             new("db.Rquery",
                 .content = paste("select ", id.str, col.name,
-                " from ", content(x), " where ", x@.id.col,
+                " from ", content(x), " where ", x@.key,
                 " = ", i, sep = ""),
                 .col.name = col.name,
                 .conn.id = conn.id(x),
-                .id.col = x@.id.col)
+                .key = x@.key)
         }
     },
     valueClass = "db.Rquery")

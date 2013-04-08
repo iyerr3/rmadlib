@@ -16,10 +16,10 @@ setMethod (
     signature (x = "data.frame"),
     def = function (
     x, table.name, conn.id = 1, add.row.names = FALSE,
-    id.col = character(0), distributed.by = NULL,
+    key = character(0), distributed.by = NULL,
     is.temp = FALSE, ...)
     .method.as.db.data.frame.1(x, table.name, conn.id,
-                               add.row.names, id.col,
+                               add.row.names, key,
                                distributed.by, is.temp, ...),
     valueClass = "db.data.frame")
 
@@ -32,10 +32,10 @@ setMethod (
     signature (x = "character"),
     def = function (
     x, table.name, conn.id = 1, add.row.names = FALSE,
-    id.col = character(0), distributed.by = NULL,
+    key = character(0), distributed.by = NULL,
     is.temp = FALSE, ...)
     .method.as.db.data.frame.1(x, table.name, conn.id,
-                               add.row.names, id.col,
+                               add.row.names, key,
                                distributed.by, is.temp, ...),
     valueClass = "db.data.frame")
 
@@ -43,13 +43,13 @@ setMethod (
 
 .method.as.db.data.frame.1 <- function (
     x, table.name, conn.id = 1, add.row.names = FALSE,
-    id.col = character(0), distributed.by = NULL,
+    key = character(0), distributed.by = NULL,
     is.temp = FALSE, ...)
 {
-    if (!.is.arg.string(id.col)) stop("ID column name must be a string!")
-    if (!identical(id.col, character(0)) &&
-        id.col == "row.names" && !add.row.names)
-        stop("Set row.names as TRUE if you want to use row.names as id.col!")
+    if (!.is.arg.string(key)) stop("ID column name must be a string!")
+    if (!identical(key, character(0)) &&
+        key == "row.names" && !add.row.names)
+        stop("Set row.names as TRUE if you want to use row.names as key!")
     ## argument default, and checking
     ## if (missing(conn.id)) conn.id <- 1
     if (!.is.conn.id.valid(conn.id))
@@ -73,10 +73,10 @@ setMethod (
         table.str <- paste(table_schema, ".", table, sep = "")
     } else
         table.str <- table.name
-    if (! identical(id.col, character(0)))
+    if (! identical(key, character(0)))
         .db.getQuery(paste("alter table ", table.str,
                            " add primary key (\"",
-                           id.col, "\")", sep = ""))
+                           key, "\")", sep = ""))
 
     if (is.data.frame(x)) {
         cat("\nThe data in the data.frame", deparse(substitute(x)),
@@ -91,7 +91,7 @@ setMethod (
         "in database", dbname(conn.id), "on", host(conn.id),
         "is created !\n\n")
     
-    db.data.frame(table.name, conn.id, id.col)
+    db.data.frame(table.name, conn.id, key)
 }
 
 ## ------------------------------------------------------------------------

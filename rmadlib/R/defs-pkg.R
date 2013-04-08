@@ -64,7 +64,7 @@ setClass("db.data.frame",
 ## table, a sub-class of db.obj
 setClass("db.table",
          representation(
-             .id.col = "character", # which column is used to
+             .key = "character", # which column is used to
              ## identify different rows, i.e. index
              .dim = "numeric" # dimension of table
              ),
@@ -73,7 +73,7 @@ setClass("db.table",
 ## view, a sub-class of db.obj
 setClass("db.view",
          representation(
-             .id.col = "character"
+             .key = "character"
              ),
          contains = "db.data.frame")
 
@@ -91,7 +91,7 @@ setClass("db.Rquery",
              .content = "character",
              .conn.id = "numeric",
              .col.name = "character",
-             .id.col = "character" # identification column
+             .key = "character" # identification column
              )
          )
 
