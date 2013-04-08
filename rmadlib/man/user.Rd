@@ -1,62 +1,100 @@
-\name{user}
+\name{Utilities for extracting information about a database connection}
+
 \alias{user}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\alias{host}
+\alias{dbname}
+\alias{dbms}
+\alias{conn}
+\alias{madlib}
+\alias{madlib.version}
+\alias{schema.madlib}
+\alias{conn.pkg}
+
 \title{
-  ++function to do ... ++
+  Utilities for extracting related information about a database connection
 }
+
 \description{
-  ++ A concise (1-5 lines) description of what the function does. ++
+  For a given database connection, these functions return the user name,
+  host, database name, info about database management system,
+  connection, the version of MADlib installed on this database, the
+  schema name of MADlib installation, and the R package that is used to
+  connect to this database.
 }
+
 \usage{
 user(conn.id = 1)
+
+host(conn.id = 1)
+
+dbname(conn.id = 1)
+
+dbms(conn.id = 1)
+
+conn(conn.id = 1)
+
+madlib(conn.id = 1)
+
+madlib.version(conn.id = 1)
+
+schema.madlib(conn.id = 1)
+
+conn.pkg(conn.id = 1)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{conn.id}{
-     ++Describe \code{con.id} here++
-}
-}
-\details{
-  ++ If necessary, more details than the description above ++
-}
-\value{
-  +Describe the value returned
- If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
- +put references to the literature/web site here +
-}
-\author{
-  ++who you are++
-}
-\note{
-  ++further notes++
-}
-
-%% +Make other sections like Warning with \section{Warning }{....} +
-
-\seealso{
-++objects to See Also as \code{\link{help}}, +++
-}
-\examples{
-## Not run:
-
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (conn.id = 1) 
-{
-    .localVars$db[[conn.id]]$user
+    Default value is 1. The database connection ID number
+    \code{con.id}. It is an integer.
   }
-
-## End (Not run)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+
+\value{
+  For \code{user}, a string, which is the user name.
+  
+  For \code{host}, a string, which is the host address.
+
+  For \code{dbname}, a string, which is the database name.
+
+  For \code{dbms}, a string, which is DBMS version information.
+
+  For \code{conn}, an object of DBI connection, which can be directly
+  used with packages such as RPostgreSQL.
+
+  For \code{madlib}, a string, which is the MADlib version information.
+
+  For \code{madlib.version}, a string, exactly the same as \code{madlib}.
+
+  For \code{schema.madlib}, a string, which is the schema name of MADlib
+  installation.
+
+  For \code{conn.pkg}, a string, which is the name of the R package that
+  has been used to connect to this database.
+}
+
+\author{
+  Predictive Analytics Team at Pivotal Inc.
+  Maintainer: Hai Qian <hai.qian@emc.com>
+}
+
+\examples{
+\dontrun{
+
+user(1)
+host(2)
+dbname() # use default connection 1
+dbms()
+madlib()
+madlib.version()
+schema.madlib()
+conn.pkg()
+
+con <- conn(1) # get the connection object
+dbListTables(con) # directly use functions in RPostgreSQL
+}
+}
+
+\keyword{ utility }
+\keyword{ info }
+\keyword{ database }
+
