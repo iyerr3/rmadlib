@@ -1,0 +1,117 @@
+
+* DB layer accept madlibtestdata.lin_ornstein format table name
+
+DONE * Test the manual format for S4 methods
+
+DONE * Better names for classes
+
+DONE * print & show for db.data.frame
+
+DONE * temp table/view cannot be handled correctly
+
+* Override +-*/ etc 
+
+* Override <>== etc 
+
+* Override sqrt, log, log1p etc 
+
+* colMeans, colSums, colSds
+
+* \concept in doc
+
+DONE * Fix the bug: cannot diconnect any connection before last
+
+* Check db.obj whether the related connection is live
+
+DONE * Allow change conn.id for the connections
+
+DONE * Actually no need to install RPostgreSQL from source
+
+DONE * Change db.data.frame from method to function (data.frame is not generic)
+
+DONE * implement lm and replated summary, print functions
+
+* predict function for lm
+
+* implement glm
+
+* predict function for glm
+
+* Need to use "try" in free functions to prevent leaving temporary tables around
+
+* funtion resync
+
+DONE * as.db.data.frame for data.frame
+
+DONE * as.db.data.frame for file
+
+* implement apply etc
+
+* summary method
+
+DONE * utility function for analyzing formula
+
+* utility function for creating temporary table during fitting db.Rquery objects, need "try"
+
+DONE * utility function for unique string
+
+* Many warnings during build process
+
+DONE * Implement is.db.data.frame
+
+DONE * When writing file to a table, need support for distributed.by and is.temp
+
+DONE * Careful check existsTable when writing to a table
+
+DONE * as.db.data.frame supports putting file into database
+
+DONE * as.db.data.frame supports converting anything to data.frame and then put it into database
+
+DONE * Print verbose when create mapping (db.data.frame) and as.db.data.frame
+
+DONE * Improvement for .db.existsTable when is.temp is TRUE
+
+*** existsTable cannot check view, may need to use .is.table.or.view to check existence for all
+
+YES * Can all arguments included in the generic definition
+
+MAYBE NO NEED * Can arguments in generic function have default values?
+
+DONE * function portion to extract a sample of the data
+
+* function sample
+
+DONE * utility function to set message level
+
+DONE * Error class
+
+DONE * utility function to read input interactively
+
+* Need to check whether id.col is in names() when create db.data.frame
+
+* May need a distributed.by properties for db.obj, useful when creating temp table
+
+* How to deal with NULL, INF, NA etc in the result of linregr
+
+DONE * provide conn function
+
+* provide types function for column types
+
+* provide db.listTables
+
+* provide db.listSchemas
+
+DONE * add a dbms function to print out the DBMS version info
+
+NO WAY TO DO THIS * logistic and multi-logistic dependent variable
+should be a factor, R needs to take care of this
+
+DONE * conn_attr utilities all need to validate conn.id
+
+* Can we choose not to expose the classes to the user?
+
+* Need print & show functions for db.Rquery objects
+
+* May need a realize-in-R function for db.Rquery objects
+
+* Let "conn.id<-" change conn.id for multiple objects together
