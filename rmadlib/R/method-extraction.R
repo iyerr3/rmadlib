@@ -70,8 +70,8 @@ setMethod(
                     new("db.Rquery",
                         .content = paste("select ", id.str,
                         i, " from ", content(x), sep = ""),
-                        conn.id = conn.id(x),
-                        .name = i,
+                        .conn.id = conn.id(x),
+                        .col.name = i,
                         .id.col = x@.id.col)
                 } else {
                     stop(paste("Column", i, "does not exist!"))
@@ -86,8 +86,8 @@ setMethod(
                     .content = paste("select ", id.str,
                     names(x)[ii], " from ", content(x),
                     sep = ""),
-                    conn.id = conn.id(x),
-                    .name = names(x)[[ii]],
+                    .conn.id = conn.id(x),
+                    .col.name = names(x)[[ii]],
                     .id.col = x@.id.col)
             }
         }
@@ -115,8 +115,8 @@ setMethod(
                 .content = paste("select ", id.str, col.name,
                 " from ", content(x), " where ", x@.id.col,
                 " = ", i, sep = ""),
-                .name = col.name,
-                conn.id = conn.id(x),
+                .col.name = col.name,
+                .conn.id = conn.id(x),
                 .id.col = x@.id.col)
         }
     },

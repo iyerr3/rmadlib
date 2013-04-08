@@ -36,10 +36,7 @@ arraydb.to.arrayr <- function (str, type = "double")
         res <- rbind(res, elm)
     }
     row.names(res) <- NULL
-    if (dim(res)[1] == 1)
-        return (as.vector(res))
-    else
-        res
+    res
 }
 
 ## ------------------------------------------------------------------------

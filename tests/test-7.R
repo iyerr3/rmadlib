@@ -34,3 +34,7 @@ dat$y <- factor(as.integer(dat$interlocks < 10) + 2)
 g <- glm(y ~ assets + sector + nation, family = binomial, data = dat)
 
 summary(g)
+
+z <- x$assets
+
+w <- x[["nation"]]
