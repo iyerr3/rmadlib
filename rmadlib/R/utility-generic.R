@@ -6,7 +6,7 @@
 ## ------------------------------------------------------------------------
 
 ## convert {...} string into an arrayparams$grp.str
-.str2vec <- function (str, type = "double")
+arraydb.to.arrayr <- function (str, type = "double")
 {
     if (is.null(str)) return (NULL)
     
@@ -36,7 +36,10 @@
         res <- rbind(res, elm)
     }
     row.names(res) <- NULL
-    res
+    if (dim(res)[1] == 1)
+        return (as.vector(res))
+    else
+        res
 }
 
 ## ------------------------------------------------------------------------
@@ -72,7 +75,7 @@
 ##     } else if (length(parts) == 1) {
 ##         table_name <- parts[1]
    
-##         schemas <- .str2vec(.db.getQuery("select current_schemas(True)", conn.id),
+##         schemas <- arraydb.to.arrayr(.db.getQuery("select current_schemas(True)", conn.id),
 ##                                type = "character")
 ##         table_schema <- NULL
 ##         for (schema in schemas)

@@ -70,14 +70,14 @@ madlib.lm <- function (formula, data, na.action, method,
     res.names <- names(res)
     for (i in seq(res.names))
         rst[[res.names[i]]] <- res[[res.names[i]]]
-    rst$coef <- .str2vec(res$coef, "double")
-    rst$std_err <- .str2vec(res$std_err, "double")
-    rst$t_stats <- .str2vec(res$t_stats, "double")
-    rst$p_values <- .str2vec(res$p_values, "double")
+    rst$coef <- arraydb.to.arrayr(res$coef, "double")
+    rst$std_err <- arraydb.to.arrayr(res$std_err, "double")
+    rst$t_stats <- arraydb.to.arrayr(res$t_stats, "double")
+    rst$p_values <- arraydb.to.arrayr(res$p_values, "double")
 
     ## other useful information
     rst$grps <- dim(rst$coef)[1] # how many groups
-    rst$grp.cols <- as.vector(.str2vec(params$grp.str, "character"))
+    rst$grp.cols <- arraydb.to.arrayr(params$grp.str, "character")
     rst$has.intercept <- params$has.intercept # do we have an intercept
     rst$ind.vars <- params$ind.vars
     rst$call <- deparse(match.call()) # the current function call itself

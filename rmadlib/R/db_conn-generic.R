@@ -210,7 +210,7 @@ db.list <- function ()
     }
     else
     {
-        schemas <- .str2vec(
+        schemas <- arraydb.to.arrayr(
             .db.getQuery("select current_schemas(True)", conn.id),
             type = "character")
         table_schema <- NULL
