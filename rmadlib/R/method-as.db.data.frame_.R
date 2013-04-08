@@ -47,7 +47,7 @@ setMethod (
     is.temp = FALSE, ...)
 {
     if (!.is.arg.string(id.col)) stop("ID column name must be a string!")
-    if (length(nchar(id.col)) > 0 &&
+    if (!identical(id.col, character(0)) &&
         id.col == "row.names" && !add.row.names)
         stop("Set row.names as TRUE if you want to use row.names as id.col!")
     ## argument default, and checking
@@ -73,7 +73,7 @@ setMethod (
         table.str <- paste(table_schema, ".", table, sep = "")
     } else
         table.str <- table.name
-    if (length(nchar(id.col)) != 0)
+    if (! identical(id.col, character(0)))
         .db.getQuery(paste("alter table ", table.str,
                            " add primary key (\"",
                            id.col, "\")", sep = ""))

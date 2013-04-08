@@ -73,6 +73,7 @@ setClass("db.table",
 ## view, a sub-class of db.obj
 setClass("db.view",
          representation(
+             .id.col = "character"
              ),
          contains = "db.data.frame")
 
@@ -89,7 +90,8 @@ setClass("db.Rquery",
          representation(
              .content = "character",
              .conn.id = "numeric",
-             .col.name = "character"
+             .col.name = "character",
+             .id.col = "character" # identification column
              )
          )
 

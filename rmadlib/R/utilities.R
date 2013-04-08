@@ -42,7 +42,7 @@ setMethod(
     "sample",
     signature(x = "db.table"),
     function (x, size, replace = FALSE, prob = NULL) {
-        if (length(nchar(x@.id.col)) != 0) # has a valid id.col
+        if (!identical(x@.id.col, character(0)) # has a valid id.col
         {
 
         }

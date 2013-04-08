@@ -21,7 +21,8 @@ db.data.frame <- function (x, conn.id = 1, id.col = character(0))
         res <- new("db.view",
                    .name = table,
                    .content = x,
-                   .conn.id = conn.id)
+                   .conn.id = conn.id,
+                   .id.col = character(0))
     }
     else
     {
