@@ -11,12 +11,12 @@ is.db.data.frame <- function (x)
 ## ------------------------------------------------------------------------
 
 ## Grab a portion of the data
-portion <- function(x, nrows = 100)
+portion <- function(x, nrows = 100, interactive = TRUE)
 {
     if (! inherits(x, "db.data.frame"))
         stop(deparse(substitute(x)), " must be a db.data.frame object!")
 
-    if (! inherits(x, "db.view")) {
+    if (inherits(x, "db.view") && interactive) {
         cat(deparse(substitute(x)),
             "points to a view in the database",
             dbname(conn.id(x)),

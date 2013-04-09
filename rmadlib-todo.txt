@@ -115,3 +115,5 @@ DONE * conn_attr utilities all need to validate conn.id
 * May need a realize-in-R function for db.Rquery objects
 
 * Let "conn.id<-" change conn.id for multiple objects together
+
+* Deal with svec

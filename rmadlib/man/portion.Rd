@@ -1,60 +1,59 @@
 \name{portion}
+
 \alias{portion}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
-function to do ... ~~
+  Read the actual data stored in the table of database
 }
 \description{
- A concise (1-5 lines) description of what the function does. ~~
+  The function reads the actual data from the table in the database.
 }
 \usage{
-portion(x, nrows = 100)
+portion(x, nrows = 100, interactive = TRUE)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{x}{
-Describe \code{x} here~~
-}
+    A \code{db.data.frame} object, which points to a table or view in
+    the database.
+  }
   \item{nrows}{
-Describe \code{nrows} here~~
-}
-}
-\details{
-If necessary, more details than the description above ~~
+    An integer, default is 100, how many rows of data 
+  }
+  \item{interactive}{
+    A boolean, default is TRUE. If \code{x} is a view, then extracting
+  data from it would actually compute the view, which might take a
+  longer time, especially for large data sets. When \code{interactive}
+  is TRUE, this function will ask the user whether to continue to
+  extract data from the view. 
+  }
+  
 }
 \value{
-Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-put references to the literature/web site here ~
-}
-\author{
-who you are~~
-}
-\note{
-further notes~~
+  A \code{data.frame} object. Each column in the table becomes a column
+  of the returned \code{data.frame}. A column of arrays is converted into
+  a column of strings, see \code{\link{arraydb.to.arrayr}} for more
+  details. 
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
+\author{
+  Author: Predictive Analytics Team at Pivotal Inc. \email{user@madlib.net}
+  
+  Maintainer: Predictive Analytics Team at Pivotal
+  Inc. \email{user@madlib.net}, Hai Qian \email{hai.qian@gopivotal.com}
+}
 
 \seealso{
-objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{arraydb.to.arrayr}} convert strings extracted form
+  database into arrays
 }
 \examples{
-## Not run:
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
+\dontrun{
 
-## The function is currently defined as
-"portion"
-## End (Not run)
+x <- db.data.frame("table_in_database", conn.id = 1)
+portion(x, nrows = 10, interactive = FALSE) # extract 10 rows of data
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+}
+
+\keyword{ database }
+\keyword{ utility }

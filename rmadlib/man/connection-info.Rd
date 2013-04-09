@@ -1,4 +1,4 @@
-\name{Utilities for extracting information about a database connection}
+\name{Extract database connection info}
 
 \alias{user}
 \alias{host}
@@ -73,8 +73,10 @@ conn.pkg(conn.id = 1)
 }
 
 \author{
-  Predictive Analytics Team at Pivotal Inc.
-  Maintainer: Hai Qian <hai.qian@emc.com>
+  Author: Predictive Analytics Team at Pivotal Inc. \email{user@madlib.net}
+  
+  Maintainer: Predictive Analytics Team at Pivotal
+  Inc. \email{user@madlib.net}, Hai Qian \email{hai.qian@gopivotal.com}
 }
 
 \examples{

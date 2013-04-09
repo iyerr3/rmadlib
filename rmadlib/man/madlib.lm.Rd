@@ -8,7 +8,7 @@ function to do ... ~~
  A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-madlib.lm(formula, data, na.action, method, heteroskedasticity = FALSE)
+madlib.lm(formula, data, na.action, method, hetero = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,8 +24,8 @@ Describe \code{na.action} here~~
   \item{method}{
 Describe \code{method} here~~
 }
-  \item{heteroskedasticity}{
-Describe \code{heteroskedasticity} here~~
+  \item{hetero}{
+Describe \code{hetero} here~~
 }
 }
 \details{

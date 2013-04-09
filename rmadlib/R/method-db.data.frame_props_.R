@@ -34,7 +34,7 @@ conn.id <- function (x)
     x@.conn.id
 }
 
-"conn.id<-" <- function (x, value = integer(0))
+"conn.id<-" <- function (x, value = 1)
 {
     if (! inherits(x, "db.obj"))
         stop("The argument must be a db.obj-class object!")

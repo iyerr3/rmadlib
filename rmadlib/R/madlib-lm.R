@@ -8,7 +8,7 @@
 ## in MADlib
 ## method is also a place holder, right now only one method
 madlib.lm <- function (formula, data, na.action, method,
-                       heteroskedasticity = FALSE) # param name too long
+                       hetero = FALSE) # param name too long
 {
     ## make sure fitting to db.obj
     if (! inherits(data, "db.obj"))
@@ -45,7 +45,7 @@ madlib.lm <- function (formula, data, na.action, method,
     sql <- paste("select ", madlib, ".linregr_train('",
                  tbl.source, "', '", tbl.output, "', '",
                  params$dep.str, "', '", params$ind.str, "', ",
-                 grp, ", ", heteroskedasticity, ")", sep = "")
+                 grp, ", ", hetero, ")", sep = "")
 
     ## execute the linear regression
     res <- try(.db.getQuery(sql, conn.id), silent = TRUE)

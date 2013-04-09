@@ -2,39 +2,53 @@
 \alias{rmadlib-package}
 \docType{package}
 \title{
-What the package does (short line)
-~~ package title ~~
+  Wrapper for MADlib, an open-source library for scalable in-database
+  analytics
 }
 \description{
-More about what it does (maybe more than one line)
-~~ A concise (1-5 lines) description of the package ~~
+  The package provides a wrapper for MADlib. MADlib is an open-source
+  library for scalable in-database analytics. It provides data-parallel
+  implementations of mathematical, statistical and machine-learning
+  methods for structured and unstructured data.
 }
 \details{
 \tabular{ll}{
-Package: \tab pkg\cr
+Package: \tab rmadlib\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
+Version: \tab 0.0.1\cr
 Date: \tab 2013-04-01\cr
-License: \tab What license is it under?\cr
-Depends: \tab methods\cr
+License: \tab GPL (>= 2)\cr
+Depends: \tab methods, DBI, RPostgreSQL\cr
 }
 An overview of how to use the package, including the most important 
  functions 
 }
 \author{
-Who wrote it
-
-Maintainer: Who to complain to <yourfault@somewhere.net>
- The author and/or maintainer of the package 
+  Author: Predictive Analytics Team at Pivotal
+  Inc. \email{user@madlib.net},  with contributions
+  from Woo Jung \email{Woo.Jung@gopivotal.com}
+  
+  Maintainer: Predictive Analytics Team at Pivotal
+  Inc. \email{user@madlib.net}
 }
 \references{
- Literature or other references for background information 
+  [1] MADlib website, \url{http://madlib.net}
+  
+  [2] MADlib user docs, \url{http://doc.madlib.net/master}
+
+  [3] MADlib Wiki page, \url{http://github.com/madlib/madlib/wiki}
+
+  [4] MADlib contribution guide,
+  \url{https://github.com/madlib/madlib/wiki/Contribution-Guide}
+
+  [5] MADlib on GitHub, \url{https://github.com/madlib/madlib}
 }
-%~~ Optionally other standard keywords, one per line, from file KEYWORDS in ~~
-%~ the R documentation directory ~~
+
 \keyword{ package }
+
 \seealso{
- Optional links to other man pages, e.g. 
-%%~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
+  \code{\link{madlib.lm}} Linear regression
+
+  \code{\link{madlib.glm}} Linear, logistic and multinomial logistic regressions
 }
 

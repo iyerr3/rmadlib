@@ -10,7 +10,7 @@ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
 conn.id(x)
-`conn.id<-`(x, value = integer(0))
+conn.id(x) <- value
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
