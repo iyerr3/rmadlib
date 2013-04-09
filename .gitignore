@@ -4,3 +4,4 @@ rmadlib.Rcheck/*
 rmadlib*.tar.gz
 *.swp
 *.csv
+clickme/*
