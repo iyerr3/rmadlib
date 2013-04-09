@@ -14,6 +14,8 @@ Objects can be created by calls of the form \code{new("db.view", ...)}.
 \section{Slots}{
   \describe{
     \item{\code{.name}:}{Object of class \code{"character"} ~~ }
+    \item{\code{.key}:}{Object of class \code{"character"} ~~ }
+    \item{\code{.content}:}{Object of class \code{"character"} ~~ }
     \item{\code{.conn.id}:}{Object of class \code{"numeric"} ~~ }
     \item{\code{.col.name}:}{Object of class \code{"character"} ~~ }
     \item{\code{.col.data_type}:}{Object of class \code{"character"} ~~ }

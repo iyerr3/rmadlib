@@ -16,6 +16,7 @@ describe objects here ~~
     \item{\code{.key}:}{Object of class \code{"character"} ~~ }
     \item{\code{.dim}:}{Object of class \code{"numeric"} ~~ }
     \item{\code{.name}:}{Object of class \code{"character"} ~~ }
+    \item{\code{.content}:}{Object of class \code{"character"} ~~ }
     \item{\code{.conn.id}:}{Object of class \code{"numeric"} ~~ }
     \item{\code{.col.name}:}{Object of class \code{"character"} ~~ }
     \item{\code{.col.data_type}:}{Object of class \code{"character"} ~~ }
